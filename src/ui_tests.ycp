@@ -190,7 +190,7 @@ and reachable host in your network.
 		    if (cmdret>0)
 		    {
 			test_ping=status_failed;
-			ErrorPopupCode("ping test failed.\nAre you shure you entered a valid hostname?",cmdret);
+			ErrorPopupCode("ping test failed.\nAre you sure you entered a valid hostname?",cmdret);
 
 		    }
 		    else

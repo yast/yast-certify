@@ -150,7 +150,7 @@ and network adapter, specify whether they are onboard or separate.</p>
 	return
 	    // For translators: self_certify system dialog help, part 1 of 2
 	    _("<p>After ejecting the floppy, immediately change it to read-only. E-mail the files located on this floppy as soon as possible to:<br>&lt;certify@suse.de&gt;<br> and send the floppy to the following postal address:</p>")
-	    + _("<p>SuSE AG<br>Hardware Certification<br>Deutschherrenstr. 15-19<br>90429 Nuernberg<br>Germany</p>");
+	    + _("<p>SUSE LINUX AG<br>Hardware Certification<br>Maxfeldstr. 5<br>D-90409 Nürnberg<br>Germany</p>");
     }
 
 
