@@ -1,12 +1,9 @@
 #
 # Makefile.am for y2c_self_certify/doc
 #
-# $Id$
-#
 
 SUBDIRS = autodocs
 
-docdir = @DOCDIR@
 htmldir = $(docdir)
 
 doc_DATA =

@@ -1,11 +1,6 @@
 #
 # Makefile.am for y2c_self_certify/agents
 #
-# $Id$
-#
-
-agentdir = $(YAST2DIR)/servers_non_y2
-scrconfdir = $(YAST2DIR)/scrconf
 
 agent_SCRIPTS =
 
