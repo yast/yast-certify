@@ -1,0 +1,10 @@
+-------------------------------------------------------------------
+Tue Apr  9 11:28:06 CEST 2002 - lnussel@suse.de
+
+- renamed to yast2-module-certify
+- fixed graphics card warning
+
+-------------------------------------------------------------------
+Thu Mar 28 14:37:51 2002 - lnussel@suse.de
+
+- initial version

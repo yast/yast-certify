@@ -1,0 +1,40 @@
+/**
+ * File:
+ *   clients/self_certify.ycp
+ *
+ * Package:
+ *   Configuration of self_certify
+ *
+ * Summary:
+ *   Main file
+ *
+ * Authors:
+ *   Ludwig Nussel <lnussel@suse.de>
+ *
+ * $Id$
+ *
+ * Main file for self_certify configuration. Uses all other files.
+ *
+ */
+
+{
+    /***
+     * <h3>Configuration of the self_certify</h3>
+     */
+
+    textdomain "self_certify";
+
+    include "self_certify/ui.ycp";
+
+    /* The main () */
+    y2milestone ("Self_certify module started");
+    y2milestone ("----------------------------------------");
+
+    /* main ui function */
+    any ret = Self_certifySequence ();
+    y2debug ("ret == %1", ret);
+
+    /* Finish */
+    y2milestone ("Self_certify module finished");
+    return ret;
+}

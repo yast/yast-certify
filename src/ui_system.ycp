@@ -1,0 +1,462 @@
+/**
+ * File:
+ *   include/self_certify/ui_system.ycp
+ *
+ * Package:
+ *   Configuration of self_certify
+ *
+ * Summary:
+ *   User interface functions.
+ *
+ * Authors:
+ *   Ludwig Nussel <lnussel@suse.de>
+ *
+ * $Id$
+ *
+ * User interface functions.
+ *
+ */
+
+{
+    textdomain "self_certify";
+
+    import "Self_certify";
+
+    /**
+     * SystemDialog
+     * @return any Returned value from UserInput() call
+     * Get some Computer specifications from the user
+     */
+    global define any SystemDialog () ``{
+	string caption = _("Certification: System Information");
+
+	string system_manufacturer	= Self_certify::results["system_manufacturer"]:"";
+	string system_designation	= Self_certify::results["system_designation"]:"";
+	string system_cpu		= Self_certify::results["system_cpu"]:"";
+	string system_ram		= Self_certify::results["system_ram"]:"";
+
+	term contents =
+	`VBox(
+	    `VSpacing(1.5),
+	    `HBox (
+		`HSpacing (3),
+		`Frame( _("System Information"),
+		    `HBox(
+			`HSpacing(2),
+			`VBox(
+			    `VSpacing(0.5),
+			    `TextEntry(`id("entry_manufacturer"), _("System &manufacturer"),     system_manufacturer),
+			    `TextEntry(`id("entry_designation"),  _("System &designation"),      system_designation),
+			    `TextEntry(`id("entry_cpu"),          _("Type and number of &CPUs"), system_cpu),
+			    `TextEntry(`id("entry_ram"),          _("Amount of &RAM"),           system_ram),
+			    `VSpacing(1.5)
+			),
+			`HSpacing(2)
+		    )
+		),
+		`HSpacing (3)
+	    ),
+	    `HVStretch()
+	);
+
+	Wizard::SetContentsButtons ( caption,
+				    contents,
+				    SystemDialogHelp (),
+				    BackButtonLabel (),
+				    NextButtonLabel () );
+
+	any ret = nil;
+	while (true)
+	{
+	    ret = UI::UserInput ();
+	    if (ret == `abort)
+	    {
+		// TODO FIXME: check for change of the configuration
+		if ( UI::ReallyAbortPopup ( true ) )
+		    break;
+		else
+		    continue;
+	    }
+	    else
+	    {
+		system_manufacturer = UI::QueryWidget(`id("entry_manufacturer"), `Value);
+		system_designation  = UI::QueryWidget(`id("entry_designation"), `Value);
+		system_cpu          = UI::QueryWidget(`id("entry_cpu"), `Value);
+		system_ram          = UI::QueryWidget(`id("entry_ram"), `Value);
+
+		if( !Self_certify::test_mode )
+		{
+		    if(system_manufacturer == "")
+		    {
+			UI::MessagePopup( _("You have to enter a manufacturer"));
+			continue;
+		    }
+		    else if(system_designation == "")
+		    {
+			UI::MessagePopup( _("You have to enter a designation"));
+			continue;
+		    }
+		    else if(system_cpu == "")
+		    {
+			UI::MessagePopup( _("You have to specify the processor type"));
+			continue;
+		    }
+		    else if(system_ram == "")
+		    {
+			UI::MessagePopup( _("You have to specify the amount of RAM"));
+			continue;
+		    }
+		}
+
+		Self_certify::results["system_manufacturer"] = system_manufacturer;
+		Self_certify::results["system_designation"]  = system_designation;
+		Self_certify::results["system_cpu"]          = system_cpu;
+		Self_certify::results["system_ram"]          = system_ram;
+
+		break;
+	    }
+	};
+
+	return ret;
+    }
+
+    /**
+     * MainboardDialog
+     * @return any Returned value from UserInput() call
+     */
+    global define any MainboardDialog () ``{
+	string caption = _("Certification: Mainboard and BIOS Information");
+
+	string mainboard_manufacturer	= Self_certify::results["mainboard_manufacturer"]:"";
+	string mainboard_version	= Self_certify::results["mainboard_version"]:"";
+	string bios_manufacturer	= Self_certify::results["bios_manufacturer"]:"";
+	string bios_version		= Self_certify::results["bios_version"]:"";
+
+	term contents =
+	`VBox(
+	    `VSpacing(1.5),
+	    `HBox (
+		`HSpacing (3),
+		`Frame( _("Mainboard and BIOS Information"),
+		    `HBox(
+			`HSpacing(2),
+			`VBox(
+			    `VSpacing(0.5),
+			    `TextEntry(`id("mainboard_manufacturer"), _("Mainboard Manufacturer"), mainboard_manufacturer),
+			    `TextEntry(`id("mainboard_version"),      _("Mainboard Version"),      mainboard_version),
+			    `TextEntry(`id("bios_manufacturer"),      _("BIOS Manufacturer"),      bios_manufacturer),
+			    `TextEntry(`id("bios_version"),           _("BIOS Version"),           bios_version),
+			    `VSpacing(1.5)
+			),
+			`HSpacing(2)
+		    )
+		),
+		`HSpacing (3)
+	    ),
+	    `HVStretch()
+	);
+
+	Wizard::SetContentsButtons ( caption,
+				    contents,
+				    MainboardDialogHelp (),
+				    BackButtonLabel (),
+				    NextButtonLabel () );
+
+	any ret = nil;
+	while (true)
+	{
+	    ret = UI::UserInput ();
+	    if (ret == `abort)
+	    {
+		// TODO FIXME: check for change of the configuration
+		if ( UI::ReallyAbortPopup ( true ) )
+		    break;
+		else
+		    continue;
+	    }
+	    else
+	    {
+		mainboard_manufacturer = UI::QueryWidget(`id("mainboard_manufacturer"), `Value);
+		mainboard_version      = UI::QueryWidget(`id("mainboard_version"), `Value);
+		bios_manufacturer      = UI::QueryWidget(`id("bios_manufacturer"), `Value);
+		bios_version           = UI::QueryWidget(`id("bios_version"), `Value);
+
+		if( !Self_certify::test_mode )
+		{
+		    if(mainboard_manufacturer == "")
+		    {
+			UI::MessagePopup( _("You have to enter the manufacturer"));
+			continue;
+		    }
+		    else if(bios_manufacturer == "")
+		    {
+			UI::MessagePopup( _("You have to enter the BIOS manufacturer"));
+			continue;
+		    }
+		    else if(bios_version == "")
+		    {
+			UI::MessagePopup( _("You have to enter the BIOS Version"));
+			continue;
+		    }
+		}
+
+		Self_certify::results["mainboard_manufacturer"] = mainboard_manufacturer;
+		Self_certify::results["mainboard_version"]      = mainboard_version;
+		Self_certify::results["bios_manufacturer"]      = bios_manufacturer;
+		Self_certify::results["bios_version"]           = bios_version;
+
+		break;
+	    }
+	};
+
+	return ret;
+    }
+
+    /**
+     * @return any Returned value from UserInput() call
+     */
+    global define any HDDDialog () ``{
+	string caption = _("Certification: HDD Information");
+
+	string scsi_controller	= Self_certify::results["scsi_controller"]:"";
+	string harddisks	= Self_certify::results["harddisks"]:"";
+
+	term contents =
+	`VBox(
+	    `VSpacing(1.5),
+	    `HBox (
+		`HSpacing (3),
+		`Frame( _("HDD Information"),
+		    `HBox(
+			`HSpacing(2),
+			`VBox(
+			    `VSpacing(0.5),
+			    `TextEntry(`id("scsi_controller"), _("SCSI Controller"), scsi_controller),
+			    `MultiLineEdit(`id("harddisks"),       _("Hard Disks"),      harddisks),
+			    `VSpacing(1.5)
+			),
+			`HSpacing(2)
+		    )
+		),
+		`HSpacing (3)
+	    ),
+	    `HVStretch()
+	);
+
+	Wizard::SetContentsButtons ( caption,
+				    contents,
+				    HDDDialogHelp (),
+				    BackButtonLabel (),
+				    NextButtonLabel () );
+
+	any ret = nil;
+	while (true)
+	{
+	    ret = UI::UserInput ();
+	    if (ret == `abort)
+	    {
+		// TODO FIXME: check for change of the configuration
+		if ( UI::ReallyAbortPopup ( true ) )
+		    break;
+		else
+		    continue;
+	    }
+	    else
+	    {
+		scsi_controller = UI::QueryWidget(`id("scsi_controller"), `Value);
+		harddisks      = UI::QueryWidget(`id("harddisks"), `Value);
+
+		if( !Self_certify::test_mode )
+		{
+		    if(harddisks == "")
+		    {
+			UI::MessagePopup( _("You have to fill in the hard disk entry"));
+			continue;
+		    }
+		}
+
+		Self_certify::results["scsi_controller"] = scsi_controller;
+		Self_certify::results["harddisks"]       = harddisks;
+
+		break;
+	    }
+	};
+
+	return ret;
+    }
+
+    /**
+     * @return any Returned value from UserInput() call
+     */
+    global define any ChipsetDialog () ``{
+	string caption = _("Certification: Chipset specifications");
+
+	string chipset_manufacturer	= Self_certify::results["chipset_manufacturer"]:"";
+	string chipset_designation	= Self_certify::results["chipset_designation"]:"";
+	string chipset_northbridge	= Self_certify::results["chipset_northbridge"]:"";
+	string chipset_southbridge	= Self_certify::results["chipset_southbridge"]:"";
+	string chipset_iochip	= Self_certify::results["chipset_iochip"]:"";
+
+	term contents =
+	`VBox(
+	    `VSpacing(1.5),
+	    `HBox (
+		`HSpacing (3),
+		`Frame( _("Chipset specifications"),
+		    `HBox(
+			`HSpacing(2),
+			`VBox(
+			    `VSpacing(0.5),
+			    `TextEntry(`id("chipset_manufacturer"), _("Chipset Manufacturer"), chipset_manufacturer),
+			    `TextEntry(`id("chipset_designation"),  _("Official designation/type of chipset"), chipset_designation),
+			    `TextEntry(`id("chipset_northbridge"),  _("Northbridge"), chipset_northbridge),
+			    `TextEntry(`id("chipset_southbridge"),  _("Southbridge"), chipset_southbridge),
+			    `TextEntry(`id("chipset_iochip"),  _("I/O chip"), chipset_iochip),
+			    `VSpacing(1.5)
+			),
+			`HSpacing(2)
+		    )
+		),
+		`HSpacing (3)
+	    ),
+	    `HVStretch()
+	);
+
+	Wizard::SetContentsButtons ( caption,
+				    contents,
+				    ChipsetDialogHelp (),
+				    BackButtonLabel (),
+				    NextButtonLabel () );
+
+	any ret = nil;
+	while (true)
+	{
+	    ret = UI::UserInput ();
+	    if (ret == `abort)
+	    {
+		// TODO FIXME: check for change of the configuration
+		if ( UI::ReallyAbortPopup ( true ) )
+		    break;
+		else
+		    continue;
+	    }
+	    else
+	    {
+		chipset_manufacturer     = UI::QueryWidget(`id("chipset_manufacturer"), `Value);
+		chipset_designation      = UI::QueryWidget(`id("chipset_designation"), `Value);
+		chipset_northbridge      = UI::QueryWidget(`id("chipset_northbridge"), `Value);
+		chipset_southbridge      = UI::QueryWidget(`id("chipset_southbridge"), `Value);
+		chipset_iochip           = UI::QueryWidget(`id("chipset_iochip"), `Value);
+
+		if( !Self_certify::test_mode )
+		{
+		    if(chipset_manufacturer == "")
+		    {
+			UI::MessagePopup( _("You have to enter the chipset manufacturer"));
+			continue;
+		    }
+		    else if(chipset_designation == "")
+		    {
+			UI::MessagePopup( _("You have to enter the chipset designation"));
+			continue;
+		    }
+		}
+
+		Self_certify::results["chipset_manufacturer"] = chipset_manufacturer;
+		Self_certify::results["chipset_designation"]  = chipset_designation;
+		Self_certify::results["chipset_northbridge"]  = chipset_northbridge;
+		Self_certify::results["chipset_southbridge"]  = chipset_southbridge;
+		Self_certify::results["chipset_iochip"]       = chipset_iochip;
+
+		break;
+	    }
+	};
+
+	return ret;
+    }
+
+    /**
+     * @return any Returned value from UserInput() call
+     */
+    global define any MiscDialog () ``{
+	string caption = _("Certification: Other Devices");
+
+	string graphicscard	= Self_certify::results["graphicscard"]:"";
+	string ethernetcontroller	= Self_certify::results["ethernetcontroller"]:"";
+	string floppydrives	= Self_certify::results["floppydrives"]:"";
+	string cdromdrives	= Self_certify::results["cdromdrives"]:"";
+	string powersupply	= Self_certify::results["powersupply"]:"";
+
+	term contents =
+	`VBox(
+	    `VSpacing(1.5),
+	    `HBox (
+		`HSpacing (3),
+		`Frame( _("Other Devices"),
+		    `HBox(
+			`HSpacing(2),
+			`VBox(
+			    `VSpacing(0.5),
+			    `TextEntry(`id("graphicscard"), _("Graphics card"), graphicscard),
+			    `TextEntry(`id("ethernetcontroller"), _("Ethernet controller"), ethernetcontroller),
+			    `TextEntry(`id("floppydrives"), _("Floppy drives"), floppydrives),
+			    `TextEntry(`id("cdromdrives"), _("CD-ROM drives"), cdromdrives),
+			    `TextEntry(`id("powersupply"), _("Power supply unit"), powersupply),
+			    `VSpacing(1.5)
+			),
+			`HSpacing(2)
+		    )
+		),
+		`HSpacing (3)
+	    ),
+	    `HVStretch()
+	);
+
+	Wizard::SetContentsButtons ( caption,
+				    contents,
+				    MiscDialogHelp (),
+				    BackButtonLabel (),
+				    NextButtonLabel () );
+
+	any ret = nil;
+	while (true)
+	{
+	    ret = UI::UserInput ();
+	    if (ret == `abort)
+	    {
+		if ( UI::ReallyAbortPopup ( true ) )
+		    break;
+		else
+		    continue;
+	    }
+	    else
+	    {
+		graphicscard     = UI::QueryWidget(`id("graphicscard"), `Value);
+		ethernetcontroller     = UI::QueryWidget(`id("ethernetcontroller"), `Value);
+		floppydrives     = UI::QueryWidget(`id("floppydrives"), `Value);
+		cdromdrives     = UI::QueryWidget(`id("cdromdrives"), `Value);
+		powersupply     = UI::QueryWidget(`id("powersupply"), `Value);
+
+		if( !Self_certify::test_mode )
+		{
+		    if(graphicscard == "")
+		    {
+			UI::MessagePopup( _("You have to fill in the graphics card entry"));
+			continue;
+		    }
+		}
+
+		Self_certify::results["graphicscard"] = graphicscard;
+		Self_certify::results["ethernetcontroller"] = ethernetcontroller;
+		Self_certify::results["floppydrives"] = floppydrives;
+		Self_certify::results["cdromdrives"] = cdromdrives;
+		Self_certify::results["powersupply"] = powersupply;
+
+		break;
+	    }
+	};
+
+	return ret;
+    }
+
+}

@@ -1,0 +1,196 @@
+/**
+ * File:
+ *   modules/Self_certify.ycp
+ *
+ * Package:
+ *   Configuration of self_certify
+ *
+ * Summary:
+ *   Data for configuration of self_certify, input and output functions.
+ *
+ * Authors:
+ *   Ludwig Nussel <lnussel@suse.de>
+ *
+ * $Id$
+ *
+ * Representation of the configuration of self_certify.
+ * Input and output routines.
+ *
+ */
+
+{
+    // Set the name of the module
+    module "Self_certify";
+
+    include "ui/common_popups.ycp";
+    include "ui/common_messages.ycp";
+
+    include "self_certify/helps.ycp";
+
+    textdomain "self_certify";
+
+    global map results = $[];
+
+    map descriptions =
+	$[
+	    "system_manufacturer" : _("System manufacturer"),
+	    "system_designation" : _("System designation"),
+	    "system_cpu" : _("Type and number of CPUs"),
+	    "system_ram" : _("Amount of RAM"),
+
+	    "mainboard_manufacturer" : _("Mainboard manufacturer"),
+	    "mainboard_version" : _("Mainboard version"),
+	    "bios_manufacturer" : _("BIOS manufacturer"),
+	    "bios_version" : _("BIOS version"),
+
+	    "scsi_controller" : _("SCSI Controller"),
+	    "harddisks" : _("Hard Disks"),
+
+	    "chipset_manufacturer" : _("Chipset Manufacturer"),
+	    "chipset_designation" :  _("Official designation/type of chipset"),
+	    "chipset_northbridge" :  _("Northbridge"),
+	    "chipset_southbridge" :  _("Southbridge"),
+	    "chipset_iochip" :  _("I/O chip"),
+	    "graphicscard" : _("Graphics card"),
+
+	    "ethernetcontroller" : _("Ethernet controller"),
+	    "floppydrives" : _("Floppy drives"),
+	    "cdromdrives" : _("CD-ROM drives"),
+	    "powersupply" : _("Power supply unit"),
+
+	    "test_collect" : _("Collect system files"),
+	    "test_ping" : _("Ping test"),
+	    "test_floppy" : _("Floppy drive test"),
+	    "test_cdrom" : _("CD-ROM drive test"),
+	    "test_serial" : _("Serial login test"),
+	    "test_kernel" : _("Kernel compile test"),
+	    "test_bonnie" : _("HDD benchmark"),
+
+	];
+
+    global boolean test_mode = false;
+
+    /**
+     * Read all self_certify settings from the SCR
+     * @param abort A block that can be called by Read to find
+     *	      out whether abort is requested. Returns true if abort
+     *	      was pressed.
+     * @return boolean True on success
+     */
+    global define boolean Read (block abort) ``{
+
+	if(Args(0)=="test")
+	{
+	    test_mode=true;
+	}
+	return true;
+    }
+
+    /**
+     * Update the SCR according to self_certify settings
+     * @param abort A block that can be called by Write to find
+     *	      out whether abort is requested. Returns true if abort
+     *	      was pressed.
+     * @return boolean True on success
+     */
+    global define boolean Write (block abort) ``{
+	string caption = _("Certification: Writing settings");
+	term contents = `VBox(
+			    `VStretch(),
+			    `Label(_("Please wait while settings are copied to the floppy")),
+			    `VStretch()
+			 );
+	string helptext = SummaryDialogHelp();
+
+	Wizard::SetContentsButtons ( caption,
+				    contents,
+				    helptext,
+				    BackButtonLabel (),
+				    NextButtonLabel () );
+
+	string logfile = "/root/certlogs/workflow";
+
+	while(true)
+	{
+	    boolean writeret = SCR::Write(.target.string,logfile,SummaryText());
+
+	    if (writeret == false)
+	    {
+		boolean yes=UI::YesNoPopup(sformat(_("Could not write file %1\nDo you want try again?"),logfile));
+		if(!yes)
+		{
+		    break;
+		}
+	    }
+	    else
+	    {
+		integer cmdret= 0;
+		cmdret = SCR::Execute (.target.bash,"cd /root/certlogs; /usr/bin/copytofloppy");
+		if (cmdret > 0)
+		{
+		    boolean yes=UI::YesNoPopup("Could not copy logfiles to floppy\nDo you want try again?");
+		    if(!yes)
+		    {
+			    break;
+		    }
+		}
+		else
+		{
+		    UI::MessagePopup( _("Certification finished.\n"));
+		    return true;
+		}
+	    }
+	}
+
+	return false;
+    }
+
+    /**
+     * Get all self_certify settings from the first parameter
+     * (For use by autoinstallation.)
+     * @param settings The YCP structure to be imported.
+     * @return boolean True on success
+     */
+    global define boolean Import (map settings) ``{
+	// TODO FIXME: your code here (fill the above mentioned variables)...
+	sleep (3000);
+	return true;
+    }
+
+    /**
+     * Dump the self_certify settings to a single map
+     * (For use by autoinstallation.)
+     * @return map Dumped settings (later acceptable by Import ())
+     */
+    global define map Export () ``{
+	// TODO FIXME: your code here (return the above mentioned variables)...
+	sleep (3000);
+	return $[];
+    }
+
+    /**
+     * Build a textual summary that can be used e.g. in inst_hw_config () or
+     * something similar. Rich Text.
+     * @return string Summary of the configuration.
+     */
+    global define string Summary () ``{
+	string summary = "";
+	foreach(`k,`v,descriptions,``{
+	    summary = summary + "<b>" + v + ":</b> " + results[k]:"" + "<br>";
+	});
+	return summary;
+    }
+
+    /**
+     * Build a textual summary that can be used e.g. in inst_hw_config () or
+     * something similar. Plain text.
+     * @return string Summary of the configuration.
+     */
+    global define string SummaryText () ``{
+	string summary = "";
+	foreach(`k,`v,descriptions,``{
+	    summary = summary + v + ": " + results[k]:"" + "\n";
+	});
+	return summary;
+    }
+}

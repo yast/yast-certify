@@ -1,0 +1,599 @@
+/**
+ * File:
+ *   include/self_certify/ui_tests.ycp
+ *
+ * Package:
+ *   Configuration of self_certify
+ *
+ * Summary:
+ *   User interface functions.
+ *
+ * Authors:
+ *   Ludwig Nussel <lnussel@suse.de>
+ *
+ * $Id$
+ *
+ * User interface functions for running tests.
+ *
+ */
+
+{
+    textdomain "self_certify";
+
+    import "Self_certify";
+
+    global string status_running = _("running...");
+    global string status_failed = _("failed");
+    global string status_ok = _("OK");
+    global string status_notyet = _("not run yet");
+
+    UI(``{
+	global define ErrorPopupCode(string msg, integer code) ``{
+	    ErrorPopup(sformat(_("%1\n\nReturn Value: %2\n"),msg,code));
+	}
+    });
+
+    /**
+     * BuildTestTerm
+     * @return term
+     * Create a label, a button and a outputfield
+     */
+    global define BuildTestContents (string caption, string helptext, string frameheader, term customwidget, string status) ``{
+
+	string statusmsg = _("Current status: %1");
+
+	term contents =
+	`VBox(
+	    `VSpacing(3),
+	    `HBox (
+		`HStretch(),
+		`HSpacing (3),
+		`Frame(frameheader,
+		    `HBox(
+			`HSpacing(2),
+			`VBox(
+			    `VSpacing(0.5),
+			    customwidget,
+			    `VSpacing(0.5),
+			    `PushButton(`id(`start), _("&Start!")),
+			    `VSpacing(0.5),
+			    `Label(`id(`status),`opt(`outputField),sformat(statusmsg,status)+" "),
+			    `VSpacing(1.5)
+			),
+			`HSpacing(2)
+		    )
+		),
+		`HSpacing (3),
+		`HStretch()
+	    ),
+	    `HVStretch()
+	);
+
+	Wizard::SetContentsButtons ( caption,
+				    contents,
+				    helptext,
+				    BackButtonLabel (),
+				    NextButtonLabel () );
+    }
+
+    /**
+     * CollectDialog
+     * @return any Returned value from UserInput() call
+     * Collect log files
+     */
+    global define any CollectDialog () ``{
+	string caption = _("Certification: Collect system files");
+
+	string test_collect = Self_certify::results["test_collect"]:status_notyet;
+
+	string frameheader = _("Collect system files");
+	term customwidget = `Label(_("Press start to begin collecting some system files"));
+	string helptext = CollectDialogHelp();
+
+	BuildTestContents(caption,helptext,frameheader,customwidget,test_collect);
+
+//	UI::ChangeWidget(`id(`status),`Value,sformat(statusmsg,test_collect));
+
+	any ret = nil;
+	while (true)
+	{
+	    ret = UI::UserInput ();
+	    if (ret == `abort)
+	    {
+		if ( UI::ReallyAbortPopup ( true ) )
+		    break;
+		else
+		    continue;
+	    }
+	    else if (ret == `start)
+	    {
+		BuildTestContents(caption,helptext,frameheader,customwidget,status_running);
+
+		SCR::Execute(.target.bash,"/bin/rm -rf /tmp/certlog");
+		SCR::Execute(.target.bash,"/bin/mkdir -p /root/certlogs");
+
+		integer cmdret= 0;
+		cmdret = SCR::Execute (.target.bash,"cd /root/certlogs; /usr/bin/collect /tmp/certlog");
+
+		if (cmdret>0)
+		{
+		    test_collect=status_failed;
+		    UI::ErrorPopupCode(_("collecting system files failed."),cmdret);
+
+		}
+		else
+		{
+		    test_collect=status_ok;
+		    //UI(`ChangeWidget(`id(`status),`Value,statusmsg+collect));
+		    UI::MessagePopup(_("collecting logfiles completed"));
+		}
+
+		BuildTestContents(caption,helptext,frameheader,customwidget,test_collect);
+
+	    }
+	    else
+	    {
+
+		Self_certify::results["test_collect"] = test_collect;
+
+		break;
+	    }
+	};
+
+	return ret;
+    }
+
+    /**
+     * PingDialog
+     * @return any Returned value from UserInput() call
+     * Ping Test
+     */
+    global define any PingDialog () ``{
+	string hostname = "";
+
+	string caption = _("Certification: Ping test");
+
+	string test_ping = Self_certify::results["test_ping"]:status_notyet;
+
+	string frameheader = _("Ping test");
+	term customwidget = `VBox(
+				`Label(
+_("Now the reachability of a remote host in the LAN\nthrough the network interface will be tested\n\n")
++ _("Please enter the name or address of a running\nand reachable host in your network")),
+				`VSpacing(0.5),
+				`TextEntry(`id(`hostname),`opt(`defaultsize),_("&Hostname"),hostname)
+			    );
+	string helptext = PingDialogHelp();
+
+	BuildTestContents(caption,helptext,frameheader,customwidget,test_ping);
+	UI::ChangeWidget(`id(`hostname),`Value,hostname);
+
+	any ret = nil;
+	while (true)
+	{
+	    ret = UI::UserInput ();
+	    if (ret == `abort)
+	    {
+		if ( UI::ReallyAbortPopup ( true ) )
+		    break;
+		else
+		    continue;
+	    }
+	    else if (ret == `start)
+	    {
+		hostname=UI::QueryWidget(`id(`hostname), `Value);
+		if(hostname == "" || hostname == "localhost" || hostname == "127.0.0.1")
+		{
+		    UI::MessagePopup(_("Enter a valid hostname!"));
+		}
+		else
+		{
+		    BuildTestContents(caption,helptext,frameheader,customwidget,status_running);
+		    UI::ChangeWidget(`id(`hostname),`Value,hostname);
+
+		    integer cmdret= 0;
+		    cmdret = SCR::Execute (.target.bash,"/bin/ping -c 4 "+hostname+" >/root/certlogs/pingtest.log.$$ 2>&1");
+
+		    if (cmdret>0)
+		    {
+			test_ping=status_failed;
+			UI::ErrorPopupCode("ping test failed.\nAre you shure you entered a valid hostname?",cmdret);
+
+		    }
+		    else
+		    {
+			test_ping = status_ok;
+			UI::MessagePopup(_("ping test completed"));
+		    }
+
+		    BuildTestContents(caption,helptext,frameheader,customwidget,test_ping);
+		    UI::ChangeWidget(`id(`hostname),`Value,hostname);
+
+		}
+	    }
+	    else
+	    {
+
+		Self_certify::results["test_ping"] = test_ping;
+
+		break;
+	    }
+	};
+
+	return ret;
+    }
+
+    /**
+     * FloppyDialog
+     * @return any Returned value from UserInput() call
+     * Floppy test
+     */
+    global define any FloppyDialog () ``{
+	string caption = _("Certification: Floppy drive test");
+
+	string test_floppy = Self_certify::results["test_floppy"]:status_notyet;
+
+	string frameheader = _("Floppy test");
+	term customwidget = `VBox(
+				`Label(_("Please insert a disc in fd0 (going to be erased)")),
+				`VSpacing(0.2),
+				`Label(_("Press start to begin the floppy test"))
+			    );
+	string helptext = FloppyDialogHelp();
+
+	BuildTestContents(caption,helptext,frameheader,customwidget,test_floppy);
+
+	any ret = nil;
+	while (true)
+	{
+	    ret = UI::UserInput ();
+	    if (ret == `abort)
+	    {
+		if ( UI::ReallyAbortPopup ( true ) )
+		    break;
+		else
+		    continue;
+	    }
+	    else if (ret == `start)
+	    {
+		BuildTestContents(caption,helptext,frameheader,customwidget,status_running);
+
+		integer cmdret= 0;
+		cmdret = SCR::Execute (.target.bash,"cd /root/; /usr/bin/do_floppy");
+
+		if (cmdret>0)
+		{
+		    test_floppy=status_failed;
+		    UI::ErrorPopupCode(_("Floppy test failed"),cmdret);
+		}
+		else
+		{
+		    test_floppy=status_ok;
+		    UI::MessagePopup(_("Floppy test completed"));
+		}
+
+		BuildTestContents(caption,helptext,frameheader,customwidget,test_floppy);
+	    }
+	    else
+	    {
+
+		Self_certify::results["test_floppy"] = test_floppy;
+
+		break;
+	    }
+	};
+
+	return ret;
+    }
+
+    /**
+     * CdromDialog
+     * @return any Returned value from UserInput() call
+     * CDROM test
+     */
+    global define any CdromDialog () ``{
+	string caption = _("Certification: CD-ROM drive test");
+
+	string test_cdrom = Self_certify::results["test_cdrom"]:status_notyet;
+
+	string frameheader = _("CDROM test");
+	term customwidget = `VBox(
+				`Label(_("Please insert the installation CD in your CD-ROM drive")),
+				`VSpacing(0.2),
+				`Label(_("Press Start to begin the CD-ROM drive test"))
+			    );
+	string helptext = CdromDialogHelp();
+
+	BuildTestContents(caption,helptext,frameheader,customwidget,test_cdrom);
+
+	any ret = nil;
+	while (true)
+	{
+	    ret = UI::UserInput ();
+	    if (ret == `abort)
+	    {
+		if ( UI::ReallyAbortPopup ( true ) )
+		    break;
+		else
+		    continue;
+	    }
+	    else if (ret == `start)
+	    {
+		BuildTestContents(caption,helptext,frameheader,customwidget,status_running);
+
+		integer cmdret= 0;
+		cmdret = SCR::Execute (.target.bash,"cd /root/; /usr/bin/do_cdrom");
+
+		if (cmdret>0)
+		{
+		    test_cdrom=status_failed;
+		    UI::ErrorPopupCode(_("CD-ROM drive test failed"),cmdret);
+		}
+		else
+		{
+		    test_cdrom=status_ok;
+		    UI::MessagePopup(_("CD-ROM drive test completed"));
+		}
+
+		BuildTestContents(caption,helptext,frameheader,customwidget,test_cdrom);
+	    }
+	    else
+	    {
+
+		Self_certify::results["test_cdrom"] = test_cdrom;
+
+		break;
+	    }
+	};
+
+	return ret;
+    }
+
+    /**
+     * SerialDialog
+     * @return any Returned value from UserInput() call
+     * Serial login test
+     */
+    global define any SerialDialog () ``{
+	string caption = _("Certification: Serial login test");
+
+	string test_serial = Self_certify::results["test_serial"]:status_notyet;
+
+	string frameheader = _("Serial login test");
+	term customwidget = `VBox(
+				`Label(_("Please attach a null-modem cable to ttyS0")),
+				`VSpacing(0.2),
+				`Label(_("Press Start to begin the serial login test"))
+			    );
+	term customwidget2 = `VBox(
+				`Label(_("Now start a Terminal program on the remote system\nand log in here as root or user")),
+				`VSpacing(0.2),
+				`Label(_("Press Ok when you are logged in."))
+			    );
+
+	string helptext = SerialDialogHelp();
+
+	define integer checklogin()
+	``{
+	    boolean ready=false;
+	    integer cmdret= 111;
+	    BuildTestContents(caption,helptext,frameheader,customwidget2,_("waiting for login"));
+	    UI::ChangeWidget(`id(`start),`Label,_("&Ok"));
+	    UI::ChangeWidget(`id(`next),`Enabled,false);
+	    UI::ChangeWidget(`id(`back),`Enabled,false);
+	    repeat
+	    {
+		ret = UI::UserInput();
+		if (ret == `abort)
+		{
+		    cmdret=11;
+		    ready=true;
+		}
+		else if (ret == `start)
+		{
+		    cmdret = SCR::Execute (.target.bash,"/usr/bin/w -h |/usr/bin/grep ttyS0");
+		    SCR::Execute (.target.bash,"/usr/bin/w -h >/root/certlogs/serialtest.log.$$ 2>&1");
+		    ready=true;
+		}
+	    } until(ready);
+	    return cmdret;
+	}
+
+
+	BuildTestContents(caption,helptext,frameheader,customwidget,test_serial);
+
+	any ret = nil;
+	while (true)
+	{
+	    ret = UI::UserInput ();
+	    if (ret == `abort)
+	    {
+		if ( UI::ReallyAbortPopup ( true ) )
+		    break;
+		else
+		    continue;
+	    }
+	    else if (ret == `start)
+	    {
+		BuildTestContents(caption,helptext,frameheader,customwidget,status_running);
+
+		integer cmdret= 0;
+		cmdret = SCR::Execute (.target.bash,"/usr/bin/editinittabforagetty.pl /etc/inittab S0 115200");
+		if(cmdret == 0)
+		{
+		    cmdret = SCR::Execute (.target.bash,"/usr/bin/grep -q ttyS0 /etc/securetty||echo ttyS0 >> /etc/securetty");
+		}
+		if(cmdret == 0)
+		{
+		    cmdret = SCR::Execute (.target.bash,"/sbin/init q");
+		}
+
+		if (cmdret>0)
+		{
+		    serial_test=status_failed;
+		    UI::ErrorPopupCode(_("Starting agetty on ttyS0 failed"),cmdret);
+		}
+		else
+		{
+		    cmdret=checklogin();
+		    if(cmdret > 0)
+		    {
+			    test_serial=status_failed;
+			    UI::ErrorPopupCode("There is no one logged in on ttyS0",cmdret);
+		    }
+		    else
+		    {
+			    test_serial=status_ok;
+			    UI::MessagePopup(_("Serial test completed"));
+		    }
+		}
+
+		BuildTestContents(caption,helptext,frameheader,customwidget,test_serial);
+	    }
+	    else
+	    {
+
+		Self_certify::results["test_serial"] = test_serial;
+
+		break;
+	    }
+	};
+
+	return ret;
+    }
+
+    /**
+     * KernelDialog
+     * @return any Returned value from UserInput() call
+     * Kernel compile test
+     */
+    global define any KernelDialog () ``{
+	string caption = _("Certification: Load test - Compiling the kernel");
+
+	string test_kernel = Self_certify::results["test_kernel"]:status_notyet;
+	integer test_kernel_numbuilds = Self_certify::results["test_kernel_numbuilds"]:2;
+
+	string frameheader = _("Kernel compilation");
+	term customwidget = `VBox(
+				`HSquash(`IntField(`id(`number),_("&Number of Parallel builds"), 0, 100, test_kernel_numbuilds)),
+				`VSpacing(0.2),
+				`Label(_("Press Start to begin the kernel compile test"))
+			    );
+	string helptext = KernelDialogHelp();
+
+	BuildTestContents(caption,helptext,frameheader,customwidget,test_kernel);
+
+	any ret = nil;
+	while (true)
+	{
+	    ret = UI::UserInput ();
+	    if (ret == `abort)
+	    {
+		if ( UI::ReallyAbortPopup ( true ) )
+		    break;
+		else
+		    continue;
+	    }
+	    else if (ret == `start)
+	    {
+		BuildTestContents(caption,helptext,frameheader,customwidget,status_running);
+
+		string buildarg = "";
+		test_kernel_numbuilds = UI::QueryWidget(`id(`number), `Value);
+		if(test_kernel_numbuilds>0)
+		{
+		    buildarg=sformat(" -j %1",test_kernel_numbuilds);
+		}
+
+
+		integer cmdret= 0;
+		cmdret = SCR::Execute (.target.bash,"cd /root/; /usr/bin/buildmanykernels -c 3"+buildarg);
+
+		if (cmdret>0)
+		{
+		    test_kernel=status_failed;
+		    UI::ErrorPopupCode(_("Kernel compile test failed"),cmdret);
+		}
+		else
+		{
+		    test_kernel=status_ok;
+		    UI::MessagePopup(_("Kernel compile test completed"));
+		}
+
+		BuildTestContents(caption,helptext,frameheader,customwidget,test_kernel);
+	    }
+	    else
+	    {
+
+		Self_certify::results["test_kernel"] = test_kernel;
+		Self_certify::results["test_kernel_numbuilds"] = test_kernel_numbuilds;
+
+		break;
+	    }
+	};
+
+	return ret;
+    }
+
+    /**
+     * BonnieDialog
+     * @return any Returned value from UserInput() call
+     * bonnie test
+     */
+    global define any BonnieDialog () ``{
+	string caption = _("Certification: Performance test for the hard disk drive");
+
+	string test_bonnie = Self_certify::results["test_bonnie"]:status_notyet;
+
+	string frameheader = _("HDD benchmark");
+	term customwidget = `VBox(
+				`Label(_("Press start to begin the hard disk benchmark (bonnie)"))
+			    );
+	string helptext = BonnieDialogHelp();
+
+	BuildTestContents(caption,helptext,frameheader,customwidget,test_bonnie);
+
+	any ret = nil;
+	while (true)
+	{
+	    ret = UI::UserInput ();
+	    if (ret == `abort)
+	    {
+		if ( UI::ReallyAbortPopup ( true ) )
+		    break;
+		else
+		    continue;
+	    }
+	    else if (ret == `start)
+	    {
+		BuildTestContents(caption,helptext,frameheader,customwidget,status_running);
+
+		integer cmdret= 0;
+		cmdret = SCR::Execute (.target.bash,"cd /root/; /usr/bin/do_bonnie -c 3");
+
+		if (cmdret>0)
+		{
+		    test_bonnie=status_failed;
+		    UI::ErrorPopupCode(_("benchmark failed"),cmdret);
+		}
+		else
+		{
+		    test_bonnie=status_ok;
+		    UI::MessagePopup(_("benchmark completed"));
+		}
+
+		BuildTestContents(caption,helptext,frameheader,customwidget,test_bonnie);
+	    }
+	    else
+	    {
+
+		Self_certify::results["test_bonnie"] = test_bonnie;
+
+		break;
+	    }
+	};
+
+	return ret;
+    }
+
+}

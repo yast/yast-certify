@@ -1,0 +1,295 @@
+/**
+ * File:
+ *   include/self_certify/ui.ycp
+ *
+ * Package:
+ *   Configuration of self_certify
+ *
+ * Summary:
+ *   User interface functions.
+ *
+ * Authors:
+ *   Ludwig Nussel <lnussel@suse.de>
+ *
+ * $Id$
+ *
+ * All user interface functions.
+ *
+ */
+
+{
+
+textdomain "self_certify";
+
+import "Wizard";
+import "Progress";
+import "Self_certify";
+
+include "ui/common_popups.ycp";
+include "ui/common_messages.ycp";
+include "wizard/sequencer.ycp";
+
+include "self_certify/helps.ycp";
+include "self_certify/ui_system.ycp";
+include "self_certify/ui_tests.ycp";
+
+/**
+ * Whole configuration of self_certify
+ * @return any Returned value from WizardSequencer() call
+ */
+global define any Self_certifySequence () ``{
+    map aliases =
+	$[
+	    "read"	: [ ``( ReadDialog () ), true ],
+	    "main"	:   ``( MainSequence () ),
+	    "write"	: [ ``( WriteDialog () ), true ]
+	];
+
+    map sequence = $[
+	"ws_start" : "read",
+	"read" :
+	$[
+	    `abort	: `abort,
+	    `next	: "main"
+	],
+	"main" :
+	$[
+	    `abort	: `abort,
+	    `next	: "write"
+	],
+	"write" : $[
+	    `abort	: `abort,
+	    `next	: `next
+	]
+    ];
+
+    string caption = _("Self_certify configuration");
+    term contents = `Label (_("Initializing ..."));
+
+    Wizard::CreateDialog ();
+    Wizard::SetContentsButtons ( caption,
+				contents,
+				"",
+				BackButtonLabel (),
+				NextButtonLabel ());
+
+    any ret = WizardSequencer (aliases, sequence);
+
+    UI::CloseDialog ();
+    return ret;
+}
+
+/**
+ * Whole configuration of self_certify but without reading and writing.
+ * For use with autoinstallation.
+ * @return any Returned value from WizardSequencer() call
+ */
+global define any Self_certifyAutoSequence () ``{
+    string caption = _("Self_certify configuration");
+    term contents = `Label (_("Initializing ..."));
+
+    Wizard::CreateDialog ();
+    Wizard::SetContentsButtons ( caption,
+				contents,
+				"",
+				BackButtonLabel (),
+				NextButtonLabel ());
+
+    // Run the main configuration workflow
+    any ret = MainSequence ();
+
+    UI::CloseDialog ();
+    return ret;
+}
+
+/**
+ * Main workflow of the self_certify configuration
+ * @return any Returned value from WizardSequencer() call
+ */
+global define any MainSequence () ``{
+    map aliases =
+	$[
+	    "system"	:   ``( SystemDialog () ),
+	    "mainboard"	:   ``( MainboardDialog () ),
+	    "hdd"	:   ``( HDDDialog () ),
+	    "chipset"	:   ``( ChipsetDialog () ),
+	    "misc"	:   ``( MiscDialog () ),
+	    "collect"	:   ``( CollectDialog () ),
+	    "ping"	:   ``( PingDialog () ),
+	    "floppy"	:   ``( FloppyDialog () ),
+	    "cdrom"	:   ``( CdromDialog () ),
+	    "serial"	:   ``( SerialDialog () ),
+	    "kernel"	:   ``( KernelDialog () ),
+	    "bonnie"	:   ``( BonnieDialog () ),
+	    "summary"	:   ``( SummaryDialog () ),
+//	    "edit"	: [ ``( AddSequence () ), true ]
+	];
+
+    map sequence = $[
+	"ws_start" : "system",
+	"system" :
+	$[
+	    `abort	: `abort,
+	    `next	: "mainboard"
+	],
+	"mainboard" :
+	$[
+	    `abort	: `abort,
+	    `next	: "hdd"
+	],
+	"hdd" :
+	$[
+	    `abort	: `abort,
+	    `next	: "chipset"
+	],
+	"chipset" :
+	$[
+	    `abort	: `abort,
+	    `next	: "misc"
+	],
+	"misc" :
+	$[
+	    `abort	: `abort,
+	    `next	: "collect"
+	],
+	"collect" :
+	$[
+	    `abort	: `abort,
+	    `next	: "ping"
+	],
+	"ping" :
+	$[
+	    `abort	: `abort,
+	    `next	: "floppy"
+	],
+	"floppy" :
+	$[
+	    `abort	: `abort,
+	    `next	: "cdrom"
+	],
+	"cdrom" :
+	$[
+	    `abort	: `abort,
+	    `next	: "serial"
+	],
+	"serial" :
+	$[
+	    `abort	: `abort,
+	    `next	: "kernel"
+	],
+	"kernel" :
+	$[
+	    `abort	: `abort,
+	    `next	: "bonnie"
+	],
+	"bonnie" :
+	$[
+	    `abort	: `abort,
+	    `next	: "summary"
+	],
+	"summary" :
+	$[
+	    `abort	: `abort,
+	    `next	: `next
+	]
+    ];
+
+    any ret = WizardSequencer (aliases, sequence);
+
+    return ret;
+}
+
+/**
+ * Read settings dialog
+ * @return symbol `next if success, else `abort
+ */
+global define symbol ReadDialog () ``{
+    // Set help text
+    Wizard::RestoreHelp (ReadDialogHelp ());
+
+    // A callback function for abort
+    block callback = ``{
+	return UI::PollInput () == `abort;
+    };
+
+    // Read the configuration
+    boolean was_ok = Self_certify::Read ( callback );
+
+    if ( Self_certify::test_mode != true )
+    {
+	integer cmdret = SCR::Execute (.target.bash,"/usr/bin/connecttox");
+	if (cmdret>0)
+	{
+	    UI::ErrorPopup( _("You have to run this from X"));
+	    return 1;
+	}
+    }
+
+
+    return ( was_ok? `next : `abort );
+}
+
+/**
+ * Write settings dialog
+ * @return symbol `next if success, else `abort
+ */
+global define symbol WriteDialog () ``{
+    // Set help text
+    Wizard::RestoreHelp (WriteDialogHelp ());
+    Wizard::DisableAbortButton();
+    UI::ChangeWidget(`id(`next),`Enabled,false);
+    UI::ChangeWidget(`id(`back),`Enabled,false);
+
+    // A callback function for abort
+    block callback = ``{
+	return UI::PollInput () == `abort;
+    };
+
+    // Read the configuration
+    boolean was_ok = Self_certify::Write ( callback );
+
+    return ( was_ok? `next : `abort );
+}
+
+/**
+ * SummaryDialog
+ * @return any Returned value from UserInput() call
+ */
+global define any SummaryDialog () ``{
+    string caption = _("Certification: Summary");
+
+    term contents = `VBox(
+	`VSpacing(1),
+	`Label(_("Please insert a blank floppy in fd0 and press the Next button")),
+	`VSpacing(1),
+	`RichText(Self_certify::Summary())
+    );
+
+    Wizard::SetContentsButtons ( caption,
+				contents,
+				SummaryDialogHelp(),
+				BackButtonLabel (),
+				NextButtonLabel () );
+
+    any ret = nil;
+    while (true)
+    {
+	ret = UI::UserInput ();
+	if (ret == `abort)
+	{
+	    if ( UI::ReallyAbortPopup ( true ) )
+		break;
+	    else
+		continue;
+	}
+	else
+	{
+	    break;
+	}
+    };
+
+    return ret;
+}
+
+
+}
