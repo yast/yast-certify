@@ -21,3 +21,4 @@ Exec=/sbin/yast2 certify
 
 Name=Self certification
 GenericName=Certify your machine for SuSE Linux
+X-KDE-SubstituteUID=true
