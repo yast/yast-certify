@@ -1,8 +1,8 @@
 @HEADER-COMMENT@
-# neededforbuild yast2-devel-packages yast2-devtools
+# neededforbuild yast2-devel-packages
 
 @HEADER@
-Requires:	yast2 yast2-lib-wizard yast2-lib-sequencer
+Requires:	yast2
 Provides:	y2m_certify yast2-module-certify
 Obsoletes:	y2m_certify yast2-module-certify
 BuildArchitectures:	noarch
@@ -10,8 +10,7 @@ BuildArchitectures:	noarch
 Summary:	Self certification
 
 %description
-This package is a part of YaST2. It contains the necessary scripts to
-perform a self certification
+-
 
 @PREP@
 
@@ -23,8 +22,8 @@ perform a self certification
 
 %files
 %defattr(-,root,root)
-%dir @yncludedir@/self_certify
-@yncludedir@/self_certify/*
+%dir @yncludedir@/certify
+@yncludedir@/certify/*
 @clientdir@/*.ycp
 @moduledir@/*.ycp
 @configdir@/*.y2cc

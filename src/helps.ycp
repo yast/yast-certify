@@ -1,24 +1,15 @@
 /**
- * File:
- *   include/self_certify/helps.ycp
- *
- * Package:
- *   Configuration of self_certify
- *
- * Summary:
- *   Help texts of all the dialogs.
- *
- * Authors:
- *   Ludwig Nussel <lnussel@suse.de>
+ * File:	include/certify/helps.ycp
+ * Package:	Certification
+ * Summary:	Help texts of all the dialogs
+ * Authors:	Ludwig Nussel <lnussel@suse.de>
  *
  * $Id$
- *
- * The help texts.
- *
  */
 
 {
-    textdomain "self_certify";
+
+    textdomain "certify";
 
     /**
      * Help for the ReadDialog () dialog.
@@ -103,7 +94,7 @@ Then press the appropriate button: <B>Edit</B> or <B>Delete</B>.
     global define string MainboardDialogHelp () ``{
 	return
 	    // For translators: self_certify system dialog help, part 1 of 2
-	    _("<p>Please enter the Mainboard and BIOS specifications of your machine here<p>");
+	    _("<p>Please enter the Mainboard and BIOS specifications of your machine here</p>");
     }
 
     /**
@@ -129,7 +120,7 @@ and network adapter whether they are onboard or seperate</p>");
     global define string CollectDialogHelp () ``{
 	return
 	    // For translators: self_certify system dialog help, part 1 of 2
-	    _("<p>Now the collection of system-related log files will begin. Please be patient after pressing the  Start button. After this is completed, please press OK, then Next<p>");
+	    _("<p>Now the collection of system-related log files will begin. Please be patient after pressing the  Start button. After this is completed, please press OK, then Next</p>");
     }
     global define string PingDialogHelp () ``{
 	return
@@ -165,7 +156,8 @@ and network adapter whether they are onboard or seperate</p>");
     global define string SummaryDialogHelp () ``{
 	return
 	    // For translators: self_certify system dialog help, part 1 of 2
-	    _("<p>After ejecting the floppy, immediately change it to read-only. Please e-mail the files located on this floppy as soon as possible to:<br>&lt;certify@suse.de&gt;<br> and send the floppy to the following postal address:<p>SuSE AG<br>Hardware Certification<br>Deutschherrenstr. 15-19<br>90429 Nuernberg<br>Germany</p></p>");
+	    _("<p>After ejecting the floppy, immediately change it to read-only. Please e-mail the files located on this floppy as soon as possible to:<br>&lt;certify@suse.de&gt;<br> and send the floppy to the following postal address:</p>")
+	    + _("<p>SuSE AG<br>Hardware Certification<br>Deutschherrenstr. 15-19<br>90429 Nuernberg<br>Germany</p>");
     }
 
 
@@ -177,4 +169,5 @@ and network adapter whether they are onboard or seperate</p>");
 	return SummaryDialogHelp();
     }
 
+/* EOF */
 }

@@ -32,6 +32,12 @@ Geometry =
 SortKey = 
 
 ; which textdomain to use for translations (important!)
-Textdomain = self_certify 
+Textdomain = certify 
+
+; Autoinstall features
+Autoinst =
+
+; Resource in control file
+AutoinstResource =
 
 ; vim:syntax=dosini

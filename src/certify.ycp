@@ -1,0 +1,33 @@
+/**
+ * File:	clients/self_certify.ycp
+ * Package:	Certification
+ * Summary:	Main file
+ * Authors:	Ludwig Nussel <lnussel@suse.de>
+ *
+ * $Id$
+ */
+
+{
+
+/***
+ * <h3>Certification module</h3>
+ */
+
+textdomain "certify";
+include "certify/ui.ycp";
+
+/* The main () */
+y2milestone ("----------------------------------------");
+y2milestone ("Certify module started");
+
+/* main ui function */
+any ret = Self_certifySequence ();
+y2debug ("ret == %1", ret);
+
+/* Finish */
+y2milestone ("Certify module finished");
+y2milestone ("----------------------------------------");
+return ret;
+
+/* EOF */
+}

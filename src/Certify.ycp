@@ -1,33 +1,21 @@
 /**
- * File:
- *   modules/Self_certify.ycp
- *
- * Package:
- *   Configuration of self_certify
- *
- * Summary:
- *   Data for configuration of self_certify, input and output functions.
- *
- * Authors:
- *   Ludwig Nussel <lnussel@suse.de>
+ * File:	modules/Certify.ycp
+ * Package:	Certification
+ * Summary:	Data for certification, input and output routines
+ * Authors:	Ludwig Nussel <lnussel@suse.de>
  *
  * $Id$
- *
- * Representation of the configuration of self_certify.
- * Input and output routines.
- *
  */
 
 {
-    // Set the name of the module
-    module "Self_certify";
+
+    module "Certify";
+    textdomain "certify";
 
     include "ui/common_popups.ycp";
     include "ui/common_messages.ycp";
 
-    include "self_certify/helps.ycp";
-
-    textdomain "self_certify";
+    include "certify/helps.ycp";
 
     global map results = $[];
 
@@ -128,7 +116,7 @@
 		cmdret = SCR::Execute (.target.bash,"cd /root/certlogs; /usr/bin/copytofloppy");
 		if (cmdret > 0)
 		{
-		    boolean yes=UI::YesNoPopup("Could not copy logfiles to floppy\nDo you want try again?");
+		    boolean yes=UI::YesNoPopup(_("Could not copy logfiles to floppy\nDo you want try again?"));
 		    if(!yes)
 		    {
 			    break;
@@ -193,4 +181,6 @@
 	});
 	return summary;
     }
+
+/* EOF */
 }

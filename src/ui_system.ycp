@@ -1,26 +1,16 @@
 /**
- * File:
- *   include/self_certify/ui_system.ycp
- *
- * Package:
- *   Configuration of self_certify
- *
- * Summary:
- *   User interface functions.
- *
- * Authors:
- *   Ludwig Nussel <lnussel@suse.de>
+ * File:	include/certify/ui_system.ycp
+ * Package:	Certification
+ * Summary:	User interface functions
+ * Authors:	Ludwig Nussel <lnussel@suse.de>
  *
  * $Id$
- *
- * User interface functions.
- *
  */
 
 {
-    textdomain "self_certify";
 
-    import "Self_certify";
+    textdomain "certify";
+    import "Certify";
 
     /**
      * SystemDialog
@@ -30,10 +20,10 @@
     global define any SystemDialog () ``{
 	string caption = _("Certification: System Information");
 
-	string system_manufacturer	= Self_certify::results["system_manufacturer"]:"";
-	string system_designation	= Self_certify::results["system_designation"]:"";
-	string system_cpu		= Self_certify::results["system_cpu"]:"";
-	string system_ram		= Self_certify::results["system_ram"]:"";
+	string system_manufacturer	= Certify::results["system_manufacturer"]:"";
+	string system_designation	= Certify::results["system_designation"]:"";
+	string system_cpu		= Certify::results["system_cpu"]:"";
+	string system_ram		= Certify::results["system_ram"]:"";
 
 	term contents =
 	`VBox(
@@ -48,7 +38,7 @@
 			    `TextEntry(`id("entry_manufacturer"), _("System &manufacturer"),     system_manufacturer),
 			    `TextEntry(`id("entry_designation"),  _("System &designation"),      system_designation),
 			    `TextEntry(`id("entry_cpu"),          _("Type and number of &CPUs"), system_cpu),
-			    `TextEntry(`id("entry_ram"),          _("Amount of &RAM"),           system_ram),
+			    `TextEntry(`id("entry_ram"),          _("&Amount of RAM"),           system_ram),
 			    `VSpacing(1.5)
 			),
 			`HSpacing(2)
@@ -84,7 +74,7 @@
 		system_cpu          = UI::QueryWidget(`id("entry_cpu"), `Value);
 		system_ram          = UI::QueryWidget(`id("entry_ram"), `Value);
 
-		if( !Self_certify::test_mode )
+		if( !Certify::test_mode )
 		{
 		    if(system_manufacturer == "")
 		    {
@@ -108,10 +98,10 @@
 		    }
 		}
 
-		Self_certify::results["system_manufacturer"] = system_manufacturer;
-		Self_certify::results["system_designation"]  = system_designation;
-		Self_certify::results["system_cpu"]          = system_cpu;
-		Self_certify::results["system_ram"]          = system_ram;
+		Certify::results["system_manufacturer"] = system_manufacturer;
+		Certify::results["system_designation"]  = system_designation;
+		Certify::results["system_cpu"]          = system_cpu;
+		Certify::results["system_ram"]          = system_ram;
 
 		break;
 	    }
@@ -127,10 +117,10 @@
     global define any MainboardDialog () ``{
 	string caption = _("Certification: Mainboard and BIOS Information");
 
-	string mainboard_manufacturer	= Self_certify::results["mainboard_manufacturer"]:"";
-	string mainboard_version	= Self_certify::results["mainboard_version"]:"";
-	string bios_manufacturer	= Self_certify::results["bios_manufacturer"]:"";
-	string bios_version		= Self_certify::results["bios_version"]:"";
+	string mainboard_manufacturer	= Certify::results["mainboard_manufacturer"]:"";
+	string mainboard_version	= Certify::results["mainboard_version"]:"";
+	string bios_manufacturer	= Certify::results["bios_manufacturer"]:"";
+	string bios_version		= Certify::results["bios_version"]:"";
 
 	term contents =
 	`VBox(
@@ -142,10 +132,10 @@
 			`HSpacing(2),
 			`VBox(
 			    `VSpacing(0.5),
-			    `TextEntry(`id("mainboard_manufacturer"), _("Mainboard Manufacturer"), mainboard_manufacturer),
-			    `TextEntry(`id("mainboard_version"),      _("Mainboard Version"),      mainboard_version),
-			    `TextEntry(`id("bios_manufacturer"),      _("BIOS Manufacturer"),      bios_manufacturer),
-			    `TextEntry(`id("bios_version"),           _("BIOS Version"),           bios_version),
+			    `TextEntry(`id("mainboard_manufacturer"), _("&Mainboard Manufacturer"), mainboard_manufacturer),
+			    `TextEntry(`id("mainboard_version"),      _("Ma&inboard Version"),      mainboard_version),
+			    `TextEntry(`id("bios_manufacturer"),      _("BIOS M&anufacturer"),      bios_manufacturer),
+			    `TextEntry(`id("bios_version"),           _("BIOS Versi&on"),           bios_version),
 			    `VSpacing(1.5)
 			),
 			`HSpacing(2)
@@ -181,7 +171,7 @@
 		bios_manufacturer      = UI::QueryWidget(`id("bios_manufacturer"), `Value);
 		bios_version           = UI::QueryWidget(`id("bios_version"), `Value);
 
-		if( !Self_certify::test_mode )
+		if( !Certify::test_mode )
 		{
 		    if(mainboard_manufacturer == "")
 		    {
@@ -200,10 +190,10 @@
 		    }
 		}
 
-		Self_certify::results["mainboard_manufacturer"] = mainboard_manufacturer;
-		Self_certify::results["mainboard_version"]      = mainboard_version;
-		Self_certify::results["bios_manufacturer"]      = bios_manufacturer;
-		Self_certify::results["bios_version"]           = bios_version;
+		Certify::results["mainboard_manufacturer"] = mainboard_manufacturer;
+		Certify::results["mainboard_version"]      = mainboard_version;
+		Certify::results["bios_manufacturer"]      = bios_manufacturer;
+		Certify::results["bios_version"]           = bios_version;
 
 		break;
 	    }
@@ -218,8 +208,8 @@
     global define any HDDDialog () ``{
 	string caption = _("Certification: HDD Information");
 
-	string scsi_controller	= Self_certify::results["scsi_controller"]:"";
-	string harddisks	= Self_certify::results["harddisks"]:"";
+	string scsi_controller	= Certify::results["scsi_controller"]:"";
+	string harddisks	= Certify::results["harddisks"]:"";
 
 	term contents =
 	`VBox(
@@ -231,8 +221,8 @@
 			`HSpacing(2),
 			`VBox(
 			    `VSpacing(0.5),
-			    `TextEntry(`id("scsi_controller"), _("SCSI Controller"), scsi_controller),
-			    `MultiLineEdit(`id("harddisks"),       _("Hard Disks"),      harddisks),
+			    `TextEntry(`id("scsi_controller"), _("&SCSI Controller"), scsi_controller),
+			    `MultiLineEdit(`id("harddisks"),       _("&Hard Disks"),      harddisks),
 			    `VSpacing(1.5)
 			),
 			`HSpacing(2)
@@ -266,7 +256,7 @@
 		scsi_controller = UI::QueryWidget(`id("scsi_controller"), `Value);
 		harddisks      = UI::QueryWidget(`id("harddisks"), `Value);
 
-		if( !Self_certify::test_mode )
+		if( !Certify::test_mode )
 		{
 		    if(harddisks == "")
 		    {
@@ -275,8 +265,8 @@
 		    }
 		}
 
-		Self_certify::results["scsi_controller"] = scsi_controller;
-		Self_certify::results["harddisks"]       = harddisks;
+		Certify::results["scsi_controller"] = scsi_controller;
+		Certify::results["harddisks"]       = harddisks;
 
 		break;
 	    }
@@ -291,11 +281,11 @@
     global define any ChipsetDialog () ``{
 	string caption = _("Certification: Chipset specifications");
 
-	string chipset_manufacturer	= Self_certify::results["chipset_manufacturer"]:"";
-	string chipset_designation	= Self_certify::results["chipset_designation"]:"";
-	string chipset_northbridge	= Self_certify::results["chipset_northbridge"]:"";
-	string chipset_southbridge	= Self_certify::results["chipset_southbridge"]:"";
-	string chipset_iochip	= Self_certify::results["chipset_iochip"]:"";
+	string chipset_manufacturer	= Certify::results["chipset_manufacturer"]:"";
+	string chipset_designation	= Certify::results["chipset_designation"]:"";
+	string chipset_northbridge	= Certify::results["chipset_northbridge"]:"";
+	string chipset_southbridge	= Certify::results["chipset_southbridge"]:"";
+	string chipset_iochip	= Certify::results["chipset_iochip"]:"";
 
 	term contents =
 	`VBox(
@@ -307,11 +297,11 @@
 			`HSpacing(2),
 			`VBox(
 			    `VSpacing(0.5),
-			    `TextEntry(`id("chipset_manufacturer"), _("Chipset Manufacturer"), chipset_manufacturer),
-			    `TextEntry(`id("chipset_designation"),  _("Official designation/type of chipset"), chipset_designation),
-			    `TextEntry(`id("chipset_northbridge"),  _("Northbridge"), chipset_northbridge),
-			    `TextEntry(`id("chipset_southbridge"),  _("Southbridge"), chipset_southbridge),
-			    `TextEntry(`id("chipset_iochip"),  _("I/O chip"), chipset_iochip),
+			    `TextEntry(`id("chipset_manufacturer"), _("&Chipset Manufacturer"), chipset_manufacturer),
+			    `TextEntry(`id("chipset_designation"),  _("O&fficial designation/type of chipset"), chipset_designation),
+			    `TextEntry(`id("chipset_northbridge"),  _("N&orthbridge"), chipset_northbridge),
+			    `TextEntry(`id("chipset_southbridge"),  _("&Southbridge"), chipset_southbridge),
+			    `TextEntry(`id("chipset_iochip"),  _("&I/O chip"), chipset_iochip),
 			    `VSpacing(1.5)
 			),
 			`HSpacing(2)
@@ -348,7 +338,7 @@
 		chipset_southbridge      = UI::QueryWidget(`id("chipset_southbridge"), `Value);
 		chipset_iochip           = UI::QueryWidget(`id("chipset_iochip"), `Value);
 
-		if( !Self_certify::test_mode )
+		if( !Certify::test_mode )
 		{
 		    if(chipset_manufacturer == "")
 		    {
@@ -362,11 +352,11 @@
 		    }
 		}
 
-		Self_certify::results["chipset_manufacturer"] = chipset_manufacturer;
-		Self_certify::results["chipset_designation"]  = chipset_designation;
-		Self_certify::results["chipset_northbridge"]  = chipset_northbridge;
-		Self_certify::results["chipset_southbridge"]  = chipset_southbridge;
-		Self_certify::results["chipset_iochip"]       = chipset_iochip;
+		Certify::results["chipset_manufacturer"] = chipset_manufacturer;
+		Certify::results["chipset_designation"]  = chipset_designation;
+		Certify::results["chipset_northbridge"]  = chipset_northbridge;
+		Certify::results["chipset_southbridge"]  = chipset_southbridge;
+		Certify::results["chipset_iochip"]       = chipset_iochip;
 
 		break;
 	    }
@@ -381,11 +371,11 @@
     global define any MiscDialog () ``{
 	string caption = _("Certification: Other Devices");
 
-	string graphicscard	= Self_certify::results["graphicscard"]:"";
-	string ethernetcontroller	= Self_certify::results["ethernetcontroller"]:"";
-	string floppydrives	= Self_certify::results["floppydrives"]:"";
-	string cdromdrives	= Self_certify::results["cdromdrives"]:"";
-	string powersupply	= Self_certify::results["powersupply"]:"";
+	string graphicscard	= Certify::results["graphicscard"]:"";
+	string ethernetcontroller	= Certify::results["ethernetcontroller"]:"";
+	string floppydrives	= Certify::results["floppydrives"]:"";
+	string cdromdrives	= Certify::results["cdromdrives"]:"";
+	string powersupply	= Certify::results["powersupply"]:"";
 
 	term contents =
 	`VBox(
@@ -397,11 +387,11 @@
 			`HSpacing(2),
 			`VBox(
 			    `VSpacing(0.5),
-			    `TextEntry(`id("graphicscard"), _("Graphics card"), graphicscard),
-			    `TextEntry(`id("ethernetcontroller"), _("Ethernet controller"), ethernetcontroller),
-			    `TextEntry(`id("floppydrives"), _("Floppy drives"), floppydrives),
-			    `TextEntry(`id("cdromdrives"), _("CD-ROM drives"), cdromdrives),
-			    `TextEntry(`id("powersupply"), _("Power supply unit"), powersupply),
+			    `TextEntry(`id("graphicscard"), _("&Graphics card"), graphicscard),
+			    `TextEntry(`id("ethernetcontroller"), _("&Ethernet controller"), ethernetcontroller),
+			    `TextEntry(`id("floppydrives"), _("&Floppy drives"), floppydrives),
+			    `TextEntry(`id("cdromdrives"), _("&CD-ROM drives"), cdromdrives),
+			    `TextEntry(`id("powersupply"), _("&Power supply unit"), powersupply),
 			    `VSpacing(1.5)
 			),
 			`HSpacing(2)
@@ -437,7 +427,7 @@
 		cdromdrives     = UI::QueryWidget(`id("cdromdrives"), `Value);
 		powersupply     = UI::QueryWidget(`id("powersupply"), `Value);
 
-		if( !Self_certify::test_mode )
+		if( !Certify::test_mode )
 		{
 		    if(graphicscard == "")
 		    {
@@ -446,11 +436,11 @@
 		    }
 		}
 
-		Self_certify::results["graphicscard"] = graphicscard;
-		Self_certify::results["ethernetcontroller"] = ethernetcontroller;
-		Self_certify::results["floppydrives"] = floppydrives;
-		Self_certify::results["cdromdrives"] = cdromdrives;
-		Self_certify::results["powersupply"] = powersupply;
+		Certify::results["graphicscard"] = graphicscard;
+		Certify::results["ethernetcontroller"] = ethernetcontroller;
+		Certify::results["floppydrives"] = floppydrives;
+		Certify::results["cdromdrives"] = cdromdrives;
+		Certify::results["powersupply"] = powersupply;
 
 		break;
 	    }
@@ -459,4 +449,5 @@
 	return ret;
     }
 
+/* EOF */
 }

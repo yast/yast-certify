@@ -1,37 +1,27 @@
 /**
- * File:
- *   include/self_certify/ui.ycp
- *
- * Package:
- *   Configuration of self_certify
- *
- * Summary:
- *   User interface functions.
- *
- * Authors:
- *   Ludwig Nussel <lnussel@suse.de>
+ * File:	include/certify/ui.ycp
+ * Package:	Certification
+ * Summary:	User interface functions
+ * Authors:	Ludwig Nussel <lnussel@suse.de>
  *
  * $Id$
- *
- * All user interface functions.
- *
  */
 
 {
 
-textdomain "self_certify";
+textdomain "certify";
 
 import "Wizard";
 import "Progress";
-import "Self_certify";
+import "Certify";
 
 include "ui/common_popups.ycp";
 include "ui/common_messages.ycp";
 include "wizard/sequencer.ycp";
 
-include "self_certify/helps.ycp";
-include "self_certify/ui_system.ycp";
-include "self_certify/ui_tests.ycp";
+include "certify/helps.ycp";
+include "certify/ui_system.ycp";
+include "certify/ui_tests.ycp";
 
 /**
  * Whole configuration of self_certify
@@ -213,9 +203,9 @@ global define symbol ReadDialog () ``{
     };
 
     // Read the configuration
-    boolean was_ok = Self_certify::Read ( callback );
+    boolean was_ok = Certify::Read ( callback );
 
-    if ( Self_certify::test_mode != true )
+    if ( Certify::test_mode != true )
     {
 	integer cmdret = SCR::Execute (.target.bash,"/usr/bin/connecttox");
 	if (cmdret>0)
@@ -246,7 +236,7 @@ global define symbol WriteDialog () ``{
     };
 
     // Read the configuration
-    boolean was_ok = Self_certify::Write ( callback );
+    boolean was_ok = Certify::Write ( callback );
 
     return ( was_ok? `next : `abort );
 }
@@ -262,7 +252,7 @@ global define any SummaryDialog () ``{
 	`VSpacing(1),
 	`Label(_("Please insert a blank floppy in fd0 and press the Next button")),
 	`VSpacing(1),
-	`RichText(Self_certify::Summary())
+	`RichText(Certify::Summary())
     );
 
     Wizard::SetContentsButtons ( caption,
@@ -291,5 +281,5 @@ global define any SummaryDialog () ``{
     return ret;
 }
 
-
+/* EOF */
 }

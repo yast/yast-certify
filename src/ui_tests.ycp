@@ -1,26 +1,17 @@
 /**
- * File:
- *   include/self_certify/ui_tests.ycp
- *
- * Package:
- *   Configuration of self_certify
- *
- * Summary:
- *   User interface functions.
- *
- * Authors:
- *   Ludwig Nussel <lnussel@suse.de>
+ * File:	include/certify/ui_tests.ycp
+ * Package:	Certification
+ * Summary:	User interface functions
+ * Authors:	Ludwig Nussel <lnussel@suse.de>
  *
  * $Id$
- *
- * User interface functions for running tests.
- *
  */
 
 {
-    textdomain "self_certify";
 
-    import "Self_certify";
+    textdomain "certify";
+    import "Certify";
+    include "ui/common_messages.ycp";
 
     global string status_running = _("running...");
     global string status_failed = _("failed");
@@ -84,10 +75,10 @@
     global define any CollectDialog () ``{
 	string caption = _("Certification: Collect system files");
 
-	string test_collect = Self_certify::results["test_collect"]:status_notyet;
+	string test_collect = Certify::results["test_collect"]:status_notyet;
 
 	string frameheader = _("Collect system files");
-	term customwidget = `Label(_("Press start to begin collecting some system files"));
+	term customwidget = `Label(_("Press Start to begin collecting some system files"));
 	string helptext = CollectDialogHelp();
 
 	BuildTestContents(caption,helptext,frameheader,customwidget,test_collect);
@@ -134,7 +125,7 @@
 	    else
 	    {
 
-		Self_certify::results["test_collect"] = test_collect;
+		Certify::results["test_collect"] = test_collect;
 
 		break;
 	    }
@@ -153,7 +144,7 @@
 
 	string caption = _("Certification: Ping test");
 
-	string test_ping = Self_certify::results["test_ping"]:status_notyet;
+	string test_ping = Certify::results["test_ping"]:status_notyet;
 
 	string frameheader = _("Ping test");
 	term customwidget = `VBox(
@@ -214,7 +205,7 @@ _("Now the reachability of a remote host in the LAN\nthrough the network interfa
 	    else
 	    {
 
-		Self_certify::results["test_ping"] = test_ping;
+		Certify::results["test_ping"] = test_ping;
 
 		break;
 	    }
@@ -231,13 +222,13 @@ _("Now the reachability of a remote host in the LAN\nthrough the network interfa
     global define any FloppyDialog () ``{
 	string caption = _("Certification: Floppy drive test");
 
-	string test_floppy = Self_certify::results["test_floppy"]:status_notyet;
+	string test_floppy = Certify::results["test_floppy"]:status_notyet;
 
 	string frameheader = _("Floppy test");
 	term customwidget = `VBox(
 				`Label(_("Please insert a disc in fd0 (going to be erased)")),
 				`VSpacing(0.2),
-				`Label(_("Press start to begin the floppy test"))
+				`Label(_("Press Start to begin the floppy test"))
 			    );
 	string helptext = FloppyDialogHelp();
 
@@ -277,7 +268,7 @@ _("Now the reachability of a remote host in the LAN\nthrough the network interfa
 	    else
 	    {
 
-		Self_certify::results["test_floppy"] = test_floppy;
+		Certify::results["test_floppy"] = test_floppy;
 
 		break;
 	    }
@@ -294,7 +285,7 @@ _("Now the reachability of a remote host in the LAN\nthrough the network interfa
     global define any CdromDialog () ``{
 	string caption = _("Certification: CD-ROM drive test");
 
-	string test_cdrom = Self_certify::results["test_cdrom"]:status_notyet;
+	string test_cdrom = Certify::results["test_cdrom"]:status_notyet;
 
 	string frameheader = _("CDROM test");
 	term customwidget = `VBox(
@@ -340,7 +331,7 @@ _("Now the reachability of a remote host in the LAN\nthrough the network interfa
 	    else
 	    {
 
-		Self_certify::results["test_cdrom"] = test_cdrom;
+		Certify::results["test_cdrom"] = test_cdrom;
 
 		break;
 	    }
@@ -357,7 +348,7 @@ _("Now the reachability of a remote host in the LAN\nthrough the network interfa
     global define any SerialDialog () ``{
 	string caption = _("Certification: Serial login test");
 
-	string test_serial = Self_certify::results["test_serial"]:status_notyet;
+	string test_serial = Certify::results["test_serial"]:status_notyet;
 
 	string frameheader = _("Serial login test");
 	term customwidget = `VBox(
@@ -368,7 +359,7 @@ _("Now the reachability of a remote host in the LAN\nthrough the network interfa
 	term customwidget2 = `VBox(
 				`Label(_("Now start a Terminal program on the remote system\nand log in here as root or user")),
 				`VSpacing(0.2),
-				`Label(_("Press Ok when you are logged in."))
+				`Label(_("Press OK when you are logged in."))
 			    );
 
 	string helptext = SerialDialogHelp();
@@ -378,7 +369,7 @@ _("Now the reachability of a remote host in the LAN\nthrough the network interfa
 	    boolean ready=false;
 	    integer cmdret= 111;
 	    BuildTestContents(caption,helptext,frameheader,customwidget2,_("waiting for login"));
-	    UI::ChangeWidget(`id(`start),`Label,_("&Ok"));
+	    UI::ChangeWidget(`id(`start),`Label, OKButtonLabel());
 	    UI::ChangeWidget(`id(`next),`Enabled,false);
 	    UI::ChangeWidget(`id(`back),`Enabled,false);
 	    repeat
@@ -430,7 +421,7 @@ _("Now the reachability of a remote host in the LAN\nthrough the network interfa
 
 		if (cmdret>0)
 		{
-		    serial_test=status_failed;
+		    test_serial=status_failed;
 		    UI::ErrorPopupCode(_("Starting agetty on ttyS0 failed"),cmdret);
 		}
 		else
@@ -453,7 +444,7 @@ _("Now the reachability of a remote host in the LAN\nthrough the network interfa
 	    else
 	    {
 
-		Self_certify::results["test_serial"] = test_serial;
+		Certify::results["test_serial"] = test_serial;
 
 		break;
 	    }
@@ -470,8 +461,8 @@ _("Now the reachability of a remote host in the LAN\nthrough the network interfa
     global define any KernelDialog () ``{
 	string caption = _("Certification: Load test - Compiling the kernel");
 
-	string test_kernel = Self_certify::results["test_kernel"]:status_notyet;
-	integer test_kernel_numbuilds = Self_certify::results["test_kernel_numbuilds"]:2;
+	string test_kernel = Certify::results["test_kernel"]:status_notyet;
+	integer test_kernel_numbuilds = Certify::results["test_kernel_numbuilds"]:2;
 
 	string frameheader = _("Kernel compilation");
 	term customwidget = `VBox(
@@ -525,8 +516,8 @@ _("Now the reachability of a remote host in the LAN\nthrough the network interfa
 	    else
 	    {
 
-		Self_certify::results["test_kernel"] = test_kernel;
-		Self_certify::results["test_kernel_numbuilds"] = test_kernel_numbuilds;
+		Certify::results["test_kernel"] = test_kernel;
+		Certify::results["test_kernel_numbuilds"] = test_kernel_numbuilds;
 
 		break;
 	    }
@@ -543,11 +534,11 @@ _("Now the reachability of a remote host in the LAN\nthrough the network interfa
     global define any BonnieDialog () ``{
 	string caption = _("Certification: Performance test for the hard disk drive");
 
-	string test_bonnie = Self_certify::results["test_bonnie"]:status_notyet;
+	string test_bonnie = Certify::results["test_bonnie"]:status_notyet;
 
 	string frameheader = _("HDD benchmark");
 	term customwidget = `VBox(
-				`Label(_("Press start to begin the hard disk benchmark (bonnie)"))
+				`Label(_("Press Start to begin the hard disk benchmark (bonnie)"))
 			    );
 	string helptext = BonnieDialogHelp();
 
@@ -587,7 +578,7 @@ _("Now the reachability of a remote host in the LAN\nthrough the network interfa
 	    else
 	    {
 
-		Self_certify::results["test_bonnie"] = test_bonnie;
+		Certify::results["test_bonnie"] = test_bonnie;
 
 		break;
 	    }
@@ -596,4 +587,5 @@ _("Now the reachability of a remote host in the LAN\nthrough the network interfa
 	return ret;
     }
 
+/* EOF */
 }
