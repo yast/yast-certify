@@ -11,25 +11,22 @@
 
     textdomain "certify";
     import "Certify";
-    include "ui/common_messages.ycp";
 
     global string status_running = _("running...");
     global string status_failed = _("failed");
     global string status_ok = _("OK");
     global string status_notyet = _("not run yet");
 
-    UI(``{
-	global define ErrorPopupCode(string msg, integer code) ``{
-	    ErrorPopup(sformat(_("%1\n\nReturn Value: %2\n"),msg,code));
-	}
-    });
+    global define void ErrorPopupCode(string msg, integer code) ``{
+	Popup::Error(sformat(_("%1\n\nReturn Value: %2\n"),msg,code));
+    }
 
     /**
      * BuildTestTerm
      * @return term
      * Create a label, a button and a outputfield
      */
-    global define BuildTestContents (string caption, string helptext, string frameheader, term customwidget, string status) ``{
+    global define term BuildTestContents (string caption, string helptext, string frameheader, term customwidget, string status) ``{
 
 	string statusmsg = _("Current status: %1");
 
@@ -63,8 +60,8 @@
 	Wizard::SetContentsButtons ( caption,
 				    contents,
 				    helptext,
-				    BackButtonLabel (),
-				    NextButtonLabel () );
+				    Label::BackButton (),
+				    Label::NextButton () );
     }
 
     /**
@@ -91,7 +88,7 @@
 	    ret = UI::UserInput ();
 	    if (ret == `abort)
 	    {
-		if ( UI::ReallyAbortPopup ( true ) )
+		if ( Popup::ReallyAbort ( true ) )
 		    break;
 		else
 		    continue;
@@ -104,19 +101,19 @@
 		SCR::Execute(.target.bash,"/bin/mkdir -p /root/certlogs");
 
 		integer cmdret= 0;
-		cmdret = SCR::Execute (.target.bash,"cd /root/certlogs; /usr/bin/collect /tmp/certlog");
+		cmdret = (integer) SCR::Execute (.target.bash,"cd /root/certlogs; /usr/bin/collect /tmp/certlog");
 
 		if (cmdret>0)
 		{
 		    test_collect=status_failed;
-		    UI::ErrorPopupCode(_("collecting system files failed."),cmdret);
+		    ErrorPopupCode(_("collecting system files failed."),cmdret);
 
 		}
 		else
 		{
 		    test_collect=status_ok;
 		    //UI(`ChangeWidget(`id(`status),`Value,statusmsg+collect));
-		    UI::MessagePopup(_("collecting logfiles completed"));
+		    Popup::Message(_("collecting logfiles completed"));
 		}
 
 		BuildTestContents(caption,helptext,frameheader,customwidget,test_collect);
@@ -165,17 +162,17 @@ _("Now the reachability of a remote host in the LAN\nthrough the network interfa
 	    ret = UI::UserInput ();
 	    if (ret == `abort)
 	    {
-		if ( UI::ReallyAbortPopup ( true ) )
+		if ( Popup::ReallyAbort ( true ) )
 		    break;
 		else
 		    continue;
 	    }
 	    else if (ret == `start)
 	    {
-		hostname=UI::QueryWidget(`id(`hostname), `Value);
+		hostname=(string) UI::QueryWidget(`id(`hostname), `Value);
 		if(hostname == "" || hostname == "localhost" || hostname == "127.0.0.1")
 		{
-		    UI::MessagePopup(_("Enter a valid hostname!"));
+		    Popup::Message(_("Enter a valid hostname!"));
 		}
 		else
 		{
@@ -183,18 +180,18 @@ _("Now the reachability of a remote host in the LAN\nthrough the network interfa
 		    UI::ChangeWidget(`id(`hostname),`Value,hostname);
 
 		    integer cmdret= 0;
-		    cmdret = SCR::Execute (.target.bash,"/bin/ping -c 4 "+hostname+" >/root/certlogs/pingtest.log.$$ 2>&1");
+		    cmdret = (integer) SCR::Execute (.target.bash,"/bin/ping -c 4 "+hostname+" >/root/certlogs/pingtest.log.$$ 2>&1");
 
 		    if (cmdret>0)
 		    {
 			test_ping=status_failed;
-			UI::ErrorPopupCode("ping test failed.\nAre you shure you entered a valid hostname?",cmdret);
+			ErrorPopupCode("ping test failed.\nAre you shure you entered a valid hostname?",cmdret);
 
 		    }
 		    else
 		    {
 			test_ping = status_ok;
-			UI::MessagePopup(_("ping test completed"));
+			Popup::Message(_("ping test completed"));
 		    }
 
 		    BuildTestContents(caption,helptext,frameheader,customwidget,test_ping);
@@ -240,7 +237,7 @@ _("Now the reachability of a remote host in the LAN\nthrough the network interfa
 	    ret = UI::UserInput ();
 	    if (ret == `abort)
 	    {
-		if ( UI::ReallyAbortPopup ( true ) )
+		if ( Popup::ReallyAbort ( true ) )
 		    break;
 		else
 		    continue;
@@ -250,17 +247,17 @@ _("Now the reachability of a remote host in the LAN\nthrough the network interfa
 		BuildTestContents(caption,helptext,frameheader,customwidget,status_running);
 
 		integer cmdret= 0;
-		cmdret = SCR::Execute (.target.bash,"cd /root/; /usr/bin/do_floppy");
+		cmdret = (integer) SCR::Execute (.target.bash,"cd /root/; /usr/bin/do_floppy");
 
 		if (cmdret>0)
 		{
 		    test_floppy=status_failed;
-		    UI::ErrorPopupCode(_("Floppy test failed"),cmdret);
+		    ErrorPopupCode(_("Floppy test failed"),cmdret);
 		}
 		else
 		{
 		    test_floppy=status_ok;
-		    UI::MessagePopup(_("Floppy test completed"));
+		    Popup::Message(_("Floppy test completed"));
 		}
 
 		BuildTestContents(caption,helptext,frameheader,customwidget,test_floppy);
@@ -303,7 +300,7 @@ _("Now the reachability of a remote host in the LAN\nthrough the network interfa
 	    ret = UI::UserInput ();
 	    if (ret == `abort)
 	    {
-		if ( UI::ReallyAbortPopup ( true ) )
+		if ( Popup::ReallyAbort ( true ) )
 		    break;
 		else
 		    continue;
@@ -313,17 +310,17 @@ _("Now the reachability of a remote host in the LAN\nthrough the network interfa
 		BuildTestContents(caption,helptext,frameheader,customwidget,status_running);
 
 		integer cmdret= 0;
-		cmdret = SCR::Execute (.target.bash,"cd /root/; /usr/bin/do_cdrom");
+		cmdret = (integer) SCR::Execute (.target.bash,"cd /root/; /usr/bin/do_cdrom");
 
 		if (cmdret>0)
 		{
 		    test_cdrom=status_failed;
-		    UI::ErrorPopupCode(_("CD-ROM drive test failed"),cmdret);
+		    ErrorPopupCode(_("CD-ROM drive test failed"),cmdret);
 		}
 		else
 		{
 		    test_cdrom=status_ok;
-		    UI::MessagePopup(_("CD-ROM drive test completed"));
+		    Popup::Message(_("CD-ROM drive test completed"));
 		}
 
 		BuildTestContents(caption,helptext,frameheader,customwidget,test_cdrom);
@@ -369,12 +366,12 @@ _("Now the reachability of a remote host in the LAN\nthrough the network interfa
 	    boolean ready=false;
 	    integer cmdret= 111;
 	    BuildTestContents(caption,helptext,frameheader,customwidget2,_("waiting for login"));
-	    UI::ChangeWidget(`id(`start),`Label, OKButtonLabel());
+	    UI::ChangeWidget(`id(`start),`Label, Label::OKButton());
 	    UI::ChangeWidget(`id(`next),`Enabled,false);
 	    UI::ChangeWidget(`id(`back),`Enabled,false);
 	    repeat
 	    {
-		ret = UI::UserInput();
+		any ret = UI::UserInput();
 		if (ret == `abort)
 		{
 		    cmdret=11;
@@ -382,7 +379,7 @@ _("Now the reachability of a remote host in the LAN\nthrough the network interfa
 		}
 		else if (ret == `start)
 		{
-		    cmdret = SCR::Execute (.target.bash,"/usr/bin/w -h |/usr/bin/grep ttyS0");
+		    cmdret = (integer) SCR::Execute (.target.bash,"/usr/bin/w -h |/usr/bin/grep ttyS0");
 		    SCR::Execute (.target.bash,"/usr/bin/w -h >/root/certlogs/serialtest.log.$$ 2>&1");
 		    ready=true;
 		}
@@ -399,7 +396,7 @@ _("Now the reachability of a remote host in the LAN\nthrough the network interfa
 	    ret = UI::UserInput ();
 	    if (ret == `abort)
 	    {
-		if ( UI::ReallyAbortPopup ( true ) )
+		if ( Popup::ReallyAbort ( true ) )
 		    break;
 		else
 		    continue;
@@ -409,20 +406,20 @@ _("Now the reachability of a remote host in the LAN\nthrough the network interfa
 		BuildTestContents(caption,helptext,frameheader,customwidget,status_running);
 
 		integer cmdret= 0;
-		cmdret = SCR::Execute (.target.bash,"/usr/bin/editinittabforagetty.pl /etc/inittab S0 115200");
+		cmdret = (integer) SCR::Execute (.target.bash,"/usr/bin/editinittabforagetty.pl /etc/inittab S0 115200");
 		if(cmdret == 0)
 		{
-		    cmdret = SCR::Execute (.target.bash,"/usr/bin/grep -q ttyS0 /etc/securetty||echo ttyS0 >> /etc/securetty");
+		    cmdret = (integer) SCR::Execute (.target.bash,"/usr/bin/grep -q ttyS0 /etc/securetty||echo ttyS0 >> /etc/securetty");
 		}
 		if(cmdret == 0)
 		{
-		    cmdret = SCR::Execute (.target.bash,"/sbin/init q");
+		    cmdret = (integer) SCR::Execute (.target.bash,"/sbin/init q");
 		}
 
 		if (cmdret>0)
 		{
 		    test_serial=status_failed;
-		    UI::ErrorPopupCode(_("Starting agetty on ttyS0 failed"),cmdret);
+		    ErrorPopupCode(_("Starting agetty on ttyS0 failed"),cmdret);
 		}
 		else
 		{
@@ -430,12 +427,12 @@ _("Now the reachability of a remote host in the LAN\nthrough the network interfa
 		    if(cmdret > 0)
 		    {
 			    test_serial=status_failed;
-			    UI::ErrorPopupCode("There is no one logged in on ttyS0",cmdret);
+			    ErrorPopupCode("There is no one logged in on ttyS0",cmdret);
 		    }
 		    else
 		    {
 			    test_serial=status_ok;
-			    UI::MessagePopup(_("Serial test completed"));
+			    Popup::Message(_("Serial test completed"));
 		    }
 		}
 
@@ -480,7 +477,7 @@ _("Now the reachability of a remote host in the LAN\nthrough the network interfa
 	    ret = UI::UserInput ();
 	    if (ret == `abort)
 	    {
-		if ( UI::ReallyAbortPopup ( true ) )
+		if ( Popup::ReallyAbort ( true ) )
 		    break;
 		else
 		    continue;
@@ -490,7 +487,7 @@ _("Now the reachability of a remote host in the LAN\nthrough the network interfa
 		BuildTestContents(caption,helptext,frameheader,customwidget,status_running);
 
 		string buildarg = "";
-		test_kernel_numbuilds = UI::QueryWidget(`id(`number), `Value);
+		test_kernel_numbuilds = (integer) UI::QueryWidget(`id(`number), `Value);
 		if(test_kernel_numbuilds>0)
 		{
 		    buildarg=sformat(" -j %1",test_kernel_numbuilds);
@@ -498,17 +495,17 @@ _("Now the reachability of a remote host in the LAN\nthrough the network interfa
 
 
 		integer cmdret= 0;
-		cmdret = SCR::Execute (.target.bash,"cd /root/; /usr/bin/buildmanykernels -c 3"+buildarg);
+		cmdret = (integer) SCR::Execute (.target.bash,"cd /root/; /usr/bin/buildmanykernels -c 3"+buildarg);
 
 		if (cmdret>0)
 		{
 		    test_kernel=status_failed;
-		    UI::ErrorPopupCode(_("Kernel compile test failed"),cmdret);
+		    ErrorPopupCode(_("Kernel compile test failed"),cmdret);
 		}
 		else
 		{
 		    test_kernel=status_ok;
-		    UI::MessagePopup(_("Kernel compile test completed"));
+		    Popup::Message(_("Kernel compile test completed"));
 		}
 
 		BuildTestContents(caption,helptext,frameheader,customwidget,test_kernel);
@@ -550,7 +547,7 @@ _("Now the reachability of a remote host in the LAN\nthrough the network interfa
 	    ret = UI::UserInput ();
 	    if (ret == `abort)
 	    {
-		if ( UI::ReallyAbortPopup ( true ) )
+		if ( Popup::ReallyAbort ( true ) )
 		    break;
 		else
 		    continue;
@@ -560,17 +557,17 @@ _("Now the reachability of a remote host in the LAN\nthrough the network interfa
 		BuildTestContents(caption,helptext,frameheader,customwidget,status_running);
 
 		integer cmdret= 0;
-		cmdret = SCR::Execute (.target.bash,"cd /root/; /usr/bin/do_bonnie -c 3");
+		cmdret = (integer) SCR::Execute (.target.bash,"cd /root/; /usr/bin/do_bonnie -c 3");
 
 		if (cmdret>0)
 		{
 		    test_bonnie=status_failed;
-		    UI::ErrorPopupCode(_("benchmark failed"),cmdret);
+		    ErrorPopupCode(_("benchmark failed"),cmdret);
 		}
 		else
 		{
 		    test_bonnie=status_ok;
-		    UI::MessagePopup(_("benchmark completed"));
+		    Popup::Message(_("benchmark completed"));
 		}
 
 		BuildTestContents(caption,helptext,frameheader,customwidget,test_bonnie);

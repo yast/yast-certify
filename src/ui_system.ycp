@@ -52,8 +52,8 @@
 	Wizard::SetContentsButtons ( caption,
 				    contents,
 				    SystemDialogHelp (),
-				    BackButtonLabel (),
-				    NextButtonLabel () );
+				    Label::BackButton(),
+				    Label::NextButton() );
 
 	any ret = nil;
 	while (true)
@@ -62,38 +62,38 @@
 	    if (ret == `abort)
 	    {
 		// TODO FIXME: check for change of the configuration
-		if ( UI::ReallyAbortPopup ( true ) )
+		if ( Popup::ReallyAbort ( true ) )
 		    break;
 		else
 		    continue;
 	    }
 	    else
 	    {
-		system_manufacturer = UI::QueryWidget(`id("entry_manufacturer"), `Value);
-		system_designation  = UI::QueryWidget(`id("entry_designation"), `Value);
-		system_cpu          = UI::QueryWidget(`id("entry_cpu"), `Value);
-		system_ram          = UI::QueryWidget(`id("entry_ram"), `Value);
+		system_manufacturer = (string) UI::QueryWidget(`id("entry_manufacturer"), `Value);
+		system_designation  = (string) UI::QueryWidget(`id("entry_designation"), `Value);
+		system_cpu          = (string) UI::QueryWidget(`id("entry_cpu"), `Value);
+		system_ram          = (string) UI::QueryWidget(`id("entry_ram"), `Value);
 
 		if( !Certify::test_mode )
 		{
 		    if(system_manufacturer == "")
 		    {
-			UI::MessagePopup( _("You have to enter a manufacturer"));
+			Popup::Message( _("You have to enter a manufacturer"));
 			continue;
 		    }
 		    else if(system_designation == "")
 		    {
-			UI::MessagePopup( _("You have to enter a designation"));
+			Popup::Message( _("You have to enter a designation"));
 			continue;
 		    }
 		    else if(system_cpu == "")
 		    {
-			UI::MessagePopup( _("You have to specify the processor type"));
+			Popup::Message( _("You have to specify the processor type"));
 			continue;
 		    }
 		    else if(system_ram == "")
 		    {
-			UI::MessagePopup( _("You have to specify the amount of RAM"));
+			Popup::Message( _("You have to specify the amount of RAM"));
 			continue;
 		    }
 		}
@@ -149,8 +149,8 @@
 	Wizard::SetContentsButtons ( caption,
 				    contents,
 				    MainboardDialogHelp (),
-				    BackButtonLabel (),
-				    NextButtonLabel () );
+				    Label::BackButton(),
+				    Label::NextButton() );
 
 	any ret = nil;
 	while (true)
@@ -159,33 +159,33 @@
 	    if (ret == `abort)
 	    {
 		// TODO FIXME: check for change of the configuration
-		if ( UI::ReallyAbortPopup ( true ) )
+		if ( Popup::ReallyAbort ( true ) )
 		    break;
 		else
 		    continue;
 	    }
 	    else
 	    {
-		mainboard_manufacturer = UI::QueryWidget(`id("mainboard_manufacturer"), `Value);
-		mainboard_version      = UI::QueryWidget(`id("mainboard_version"), `Value);
-		bios_manufacturer      = UI::QueryWidget(`id("bios_manufacturer"), `Value);
-		bios_version           = UI::QueryWidget(`id("bios_version"), `Value);
+		mainboard_manufacturer = (string) UI::QueryWidget(`id("mainboard_manufacturer"), `Value);
+		mainboard_version      = (string) UI::QueryWidget(`id("mainboard_version"), `Value);
+		bios_manufacturer      = (string) UI::QueryWidget(`id("bios_manufacturer"), `Value);
+		bios_version           = (string) UI::QueryWidget(`id("bios_version"), `Value);
 
 		if( !Certify::test_mode )
 		{
 		    if(mainboard_manufacturer == "")
 		    {
-			UI::MessagePopup( _("You have to enter the manufacturer"));
+			Popup::Message( _("You have to enter the manufacturer"));
 			continue;
 		    }
 		    else if(bios_manufacturer == "")
 		    {
-			UI::MessagePopup( _("You have to enter the BIOS manufacturer"));
+			Popup::Message( _("You have to enter the BIOS manufacturer"));
 			continue;
 		    }
 		    else if(bios_version == "")
 		    {
-			UI::MessagePopup( _("You have to enter the BIOS Version"));
+			Popup::Message( _("You have to enter the BIOS Version"));
 			continue;
 		    }
 		}
@@ -236,8 +236,8 @@
 	Wizard::SetContentsButtons ( caption,
 				    contents,
 				    HDDDialogHelp (),
-				    BackButtonLabel (),
-				    NextButtonLabel () );
+				    Label::BackButton(),
+				    Label::NextButton() );
 
 	any ret = nil;
 	while (true)
@@ -246,21 +246,21 @@
 	    if (ret == `abort)
 	    {
 		// TODO FIXME: check for change of the configuration
-		if ( UI::ReallyAbortPopup ( true ) )
+		if ( Popup::ReallyAbort ( true ) )
 		    break;
 		else
 		    continue;
 	    }
 	    else
 	    {
-		scsi_controller = UI::QueryWidget(`id("scsi_controller"), `Value);
-		harddisks      = UI::QueryWidget(`id("harddisks"), `Value);
+		scsi_controller = (string) UI::QueryWidget(`id("scsi_controller"), `Value);
+		harddisks      = (string) UI::QueryWidget(`id("harddisks"), `Value);
 
 		if( !Certify::test_mode )
 		{
 		    if(harddisks == "")
 		    {
-			UI::MessagePopup( _("You have to fill in the hard disk entry"));
+			Popup::Message( _("You have to fill in the hard disk entry"));
 			continue;
 		    }
 		}
@@ -315,8 +315,8 @@
 	Wizard::SetContentsButtons ( caption,
 				    contents,
 				    ChipsetDialogHelp (),
-				    BackButtonLabel (),
-				    NextButtonLabel () );
+				    Label::BackButton (),
+				    Label::NextButton () );
 
 	any ret = nil;
 	while (true)
@@ -325,29 +325,29 @@
 	    if (ret == `abort)
 	    {
 		// TODO FIXME: check for change of the configuration
-		if ( UI::ReallyAbortPopup ( true ) )
+		if ( Popup::ReallyAbort ( true ) )
 		    break;
 		else
 		    continue;
 	    }
 	    else
 	    {
-		chipset_manufacturer     = UI::QueryWidget(`id("chipset_manufacturer"), `Value);
-		chipset_designation      = UI::QueryWidget(`id("chipset_designation"), `Value);
-		chipset_northbridge      = UI::QueryWidget(`id("chipset_northbridge"), `Value);
-		chipset_southbridge      = UI::QueryWidget(`id("chipset_southbridge"), `Value);
-		chipset_iochip           = UI::QueryWidget(`id("chipset_iochip"), `Value);
+		chipset_manufacturer     = (string) UI::QueryWidget(`id("chipset_manufacturer"), `Value);
+		chipset_designation      = (string) UI::QueryWidget(`id("chipset_designation"), `Value);
+		chipset_northbridge      = (string) UI::QueryWidget(`id("chipset_northbridge"), `Value);
+		chipset_southbridge      = (string) UI::QueryWidget(`id("chipset_southbridge"), `Value);
+		chipset_iochip           = (string) UI::QueryWidget(`id("chipset_iochip"), `Value);
 
 		if( !Certify::test_mode )
 		{
 		    if(chipset_manufacturer == "")
 		    {
-			UI::MessagePopup( _("You have to enter the chipset manufacturer"));
+			Popup::Message( _("You have to enter the chipset manufacturer"));
 			continue;
 		    }
 		    else if(chipset_designation == "")
 		    {
-			UI::MessagePopup( _("You have to enter the chipset designation"));
+			Popup::Message( _("You have to enter the chipset designation"));
 			continue;
 		    }
 		}
@@ -405,8 +405,8 @@
 	Wizard::SetContentsButtons ( caption,
 				    contents,
 				    MiscDialogHelp (),
-				    BackButtonLabel (),
-				    NextButtonLabel () );
+				    Label::BackButton (),
+				    Label::NextButton () );
 
 	any ret = nil;
 	while (true)
@@ -414,24 +414,24 @@
 	    ret = UI::UserInput ();
 	    if (ret == `abort)
 	    {
-		if ( UI::ReallyAbortPopup ( true ) )
+		if ( Popup::ReallyAbort ( true ) )
 		    break;
 		else
 		    continue;
 	    }
 	    else
 	    {
-		graphicscard     = UI::QueryWidget(`id("graphicscard"), `Value);
-		ethernetcontroller     = UI::QueryWidget(`id("ethernetcontroller"), `Value);
-		floppydrives     = UI::QueryWidget(`id("floppydrives"), `Value);
-		cdromdrives     = UI::QueryWidget(`id("cdromdrives"), `Value);
-		powersupply     = UI::QueryWidget(`id("powersupply"), `Value);
+		graphicscard     = (string) UI::QueryWidget(`id("graphicscard"), `Value);
+		ethernetcontroller     = (string) UI::QueryWidget(`id("ethernetcontroller"), `Value);
+		floppydrives     = (string) UI::QueryWidget(`id("floppydrives"), `Value);
+		cdromdrives     = (string) UI::QueryWidget(`id("cdromdrives"), `Value);
+		powersupply     = (string) UI::QueryWidget(`id("powersupply"), `Value);
 
 		if( !Certify::test_mode )
 		{
 		    if(graphicscard == "")
 		    {
-			UI::MessagePopup( _("You have to fill in the graphics card entry"));
+			Popup::Message( _("You have to fill in the graphics card entry"));
 			continue;
 		    }
 		}

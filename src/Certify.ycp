@@ -12,12 +12,15 @@
     module "Certify";
     textdomain "certify";
 
-    include "ui/common_popups.ycp";
-    include "ui/common_messages.ycp";
+    import "Label";
+    import "Popup";
+    import "Wizard";
 
     include "certify/helps.ycp";
 
-    global map results = $[];
+    global map<string,any> results = $[];
+
+    global define string SummaryText ();
 
     map descriptions =
 	$[
@@ -65,9 +68,9 @@
      *	      was pressed.
      * @return boolean True on success
      */
-    global define boolean Read (block abort) ``{
+    global define boolean Read (any abort) ``{
 
-	if(Args(0)=="test")
+	if(WFM::Args(0)=="test")
 	{
 	    test_mode=true;
 	}
@@ -81,7 +84,7 @@
      *	      was pressed.
      * @return boolean True on success
      */
-    global define boolean Write (block abort) ``{
+    global define boolean Write (any abort) ``{
 	string caption = _("Certification: Writing settings");
 	term contents = `VBox(
 			    `VStretch(),
@@ -93,8 +96,8 @@
 	Wizard::SetContentsButtons ( caption,
 				    contents,
 				    helptext,
-				    BackButtonLabel (),
-				    NextButtonLabel () );
+				    Label::BackButton(),
+				    Label::NextButton() );
 
 	string logfile = "/root/certlogs/workflow";
 
@@ -104,7 +107,7 @@
 
 	    if (writeret == false)
 	    {
-		boolean yes=UI::YesNoPopup(sformat(_("Could not write file %1\nDo you want try again?"),logfile));
+		boolean yes = Popup::YesNo(sformat(_("Could not write file %1\nDo you want try again?"),logfile));
 		if(!yes)
 		{
 		    break;
@@ -113,10 +116,10 @@
 	    else
 	    {
 		integer cmdret= 0;
-		cmdret = SCR::Execute (.target.bash,"cd /root/certlogs; /usr/bin/copytofloppy");
+		cmdret = (integer) SCR::Execute (.target.bash,"cd /root/certlogs; /usr/bin/copytofloppy");
 		if (cmdret > 0)
 		{
-		    boolean yes=UI::YesNoPopup(_("Could not copy logfiles to floppy\nDo you want try again?"));
+		    boolean yes = Popup::YesNo(_("Could not copy logfiles to floppy\nDo you want try again?"));
 		    if(!yes)
 		    {
 			    break;
@@ -124,7 +127,7 @@
 		}
 		else
 		{
-		    UI::MessagePopup( _("Certification finished.\n"));
+		    Popup::Message( _("Certification finished.\n"));
 		    return true;
 		}
 	    }
@@ -163,7 +166,7 @@
      */
     global define string Summary () ``{
 	string summary = "";
-	foreach(`k,`v,descriptions,``{
+	foreach(string k, string v, descriptions,``{
 	    summary = summary + "<b>" + v + ":</b> " + results[k]:"" + "<br>";
 	});
 	return summary;
@@ -176,7 +179,7 @@
      */
     global define string SummaryText () ``{
 	string summary = "";
-	foreach(`k,`v,descriptions,``{
+	foreach(string k, string v, descriptions,``{
 	    summary = summary + v + ": " + results[k]:"" + "\n";
 	});
 	return summary;

@@ -11,23 +11,29 @@
 
 textdomain "certify";
 
-import "Wizard";
-import "Progress";
 import "Certify";
-
-include "ui/common_popups.ycp";
-include "ui/common_messages.ycp";
-include "wizard/sequencer.ycp";
+import "Label";
+import "Popup";
+import "Progress";
+import "Sequencer";
+import "Wizard";
 
 include "certify/helps.ycp";
 include "certify/ui_system.ycp";
 include "certify/ui_tests.ycp";
 
+define any Self_certifySequence ();
+define any Self_certifyAutoSequence ();
+define any MainSequence ();
+define symbol ReadDialog ();
+define symbol WriteDialog ();
+define any SummaryDialog ();
+
 /**
  * Whole configuration of self_certify
  * @return any Returned value from WizardSequencer() call
  */
-global define any Self_certifySequence () ``{
+define any Self_certifySequence () ``{
     map aliases =
 	$[
 	    "read"	: [ ``( ReadDialog () ), true ],
@@ -60,10 +66,10 @@ global define any Self_certifySequence () ``{
     Wizard::SetContentsButtons ( caption,
 				contents,
 				"",
-				BackButtonLabel (),
-				NextButtonLabel ());
+				Label::BackButton (),
+				Label::NextButton ());
 
-    any ret = WizardSequencer (aliases, sequence);
+    any ret = Sequencer::Run (aliases, sequence);
 
     UI::CloseDialog ();
     return ret;
@@ -74,7 +80,7 @@ global define any Self_certifySequence () ``{
  * For use with autoinstallation.
  * @return any Returned value from WizardSequencer() call
  */
-global define any Self_certifyAutoSequence () ``{
+define any Self_certifyAutoSequence () ``{
     string caption = _("Self_certify configuration");
     term contents = `Label (_("Initializing ..."));
 
@@ -82,8 +88,8 @@ global define any Self_certifyAutoSequence () ``{
     Wizard::SetContentsButtons ( caption,
 				contents,
 				"",
-				BackButtonLabel (),
-				NextButtonLabel ());
+				Label::BackButton (),
+				Label::NextButton ());
 
     // Run the main configuration workflow
     any ret = MainSequence ();
@@ -96,7 +102,7 @@ global define any Self_certifyAutoSequence () ``{
  * Main workflow of the self_certify configuration
  * @return any Returned value from WizardSequencer() call
  */
-global define any MainSequence () ``{
+define any MainSequence () ``{
     map aliases =
 	$[
 	    "system"	:   ``( SystemDialog () ),
@@ -184,7 +190,7 @@ global define any MainSequence () ``{
 	]
     ];
 
-    any ret = WizardSequencer (aliases, sequence);
+    any ret = Sequencer::Run (aliases, sequence);
 
     return ret;
 }
@@ -193,12 +199,12 @@ global define any MainSequence () ``{
  * Read settings dialog
  * @return symbol `next if success, else `abort
  */
-global define symbol ReadDialog () ``{
+define symbol ReadDialog () ``{
     // Set help text
     Wizard::RestoreHelp (ReadDialogHelp ());
 
     // A callback function for abort
-    block callback = ``{
+    any callback = ``{
 	return UI::PollInput () == `abort;
     };
 
@@ -207,11 +213,11 @@ global define symbol ReadDialog () ``{
 
     if ( Certify::test_mode != true )
     {
-	integer cmdret = SCR::Execute (.target.bash,"/usr/bin/connecttox");
+	integer cmdret = (integer) SCR::Execute (.target.bash,"/usr/bin/connecttox");
 	if (cmdret>0)
 	{
-	    UI::ErrorPopup( _("You have to run this from X"));
-	    return 1;
+	    Popup::Error( _("You have to run this from X"));
+	    return `abort;
 	}
     }
 
@@ -223,7 +229,7 @@ global define symbol ReadDialog () ``{
  * Write settings dialog
  * @return symbol `next if success, else `abort
  */
-global define symbol WriteDialog () ``{
+define symbol WriteDialog () ``{
     // Set help text
     Wizard::RestoreHelp (WriteDialogHelp ());
     Wizard::DisableAbortButton();
@@ -231,7 +237,7 @@ global define symbol WriteDialog () ``{
     UI::ChangeWidget(`id(`back),`Enabled,false);
 
     // A callback function for abort
-    block callback = ``{
+    any callback = ``{
 	return UI::PollInput () == `abort;
     };
 
@@ -245,7 +251,7 @@ global define symbol WriteDialog () ``{
  * SummaryDialog
  * @return any Returned value from UserInput() call
  */
-global define any SummaryDialog () ``{
+define any SummaryDialog () ``{
     string caption = _("Certification: Summary");
 
     term contents = `VBox(
@@ -258,8 +264,8 @@ global define any SummaryDialog () ``{
     Wizard::SetContentsButtons ( caption,
 				contents,
 				SummaryDialogHelp(),
-				BackButtonLabel (),
-				NextButtonLabel () );
+				Label::BackButton (),
+				Label::NextButton () );
 
     any ret = nil;
     while (true)
@@ -267,7 +273,7 @@ global define any SummaryDialog () ``{
 	ret = UI::UserInput ();
 	if (ret == `abort)
 	{
-	    if ( UI::ReallyAbortPopup ( true ) )
+	    if ( Popup::ReallyAbort ( true ) )
 		break;
 	    else
 		continue;

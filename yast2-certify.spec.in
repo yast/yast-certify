@@ -1,6 +1,5 @@
 @HEADER-COMMENT@
-
-# neededforbuild  yast2-devel-packages
+# neededforbuild yast2-devel-packages
 
 @HEADER@
 Requires:	yast2
@@ -27,6 +26,5 @@ Summary:	Self certification
 @yncludedir@/certify/*
 @clientdir@/*.ycp
 @moduledir@/*.ycp
-@configdir@/*.y2cc
 @desktopdir@/*.desktop
 %doc @docdir@
