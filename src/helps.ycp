@@ -131,9 +131,10 @@ and network adapter, specify whether they are onboard or separate.</p>
     }
     global define string SerialDialogHelp () ``{
 	return
-	    // For translators: self_certify system dialog help, part 1 of 2
-	    _("<p>Please connect the machine to be certified and another computer together via a nullmodem cable to the first serial port (ttyS0, \"COM1\"). An agetty will be started on ttyS0 which will greet you with \"Welcome to SuSE Linux ...\". You will need to start a terminal program on the remote system for the certification process to work, e.g. via 'screen /dev/ttyS0 115200'. You may have to press Return once to get the prompt. It is absolutely essential that this is the only terminal program accessing the serial port. The following command series may help you find out if there may already be a getty occupying the serial port locally:</p>")
-	    + _("ps aux|grep ttyS0|grep -v grep<br> or<br> fuser -va /dev/ttyS0<br>");
+	    // For translators: self_certify system dialog help, part 1 of 2.
+	    // %1 is the greeting message from getty (/etc/issue)
+	    "<p>" + sformat(_("Please connect the machine to be certified and another computer together via a nullmodem cable to the first serial port (ttyS0, \"COM1\"). An agetty will be started on ttyS0 which will greet you with %1. You will need to start a terminal program on the remote system for the certification process to work, e.g. via 'screen /dev/ttyS0 115200'. You may have to press Return once to get the prompt. It is absolutely essential that this is the only terminal program accessing the serial port. The following command series may help you find out if there may already be a getty occupying the serial port locally:"), sformat("\"Welcome to %1 ...\"", UI::GetProductName())) + "</p>"
+	    + "ps aux|grep ttyS0|grep -v grep<br> or<br> fuser -va /dev/ttyS0<br>";
     }
     global define string KernelDialogHelp () ``{
 	return
