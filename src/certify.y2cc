@@ -4,7 +4,7 @@
 ; $Id$
 ;
 
-[Y2Module self_certify]
+[Y2Module certify]
 
 ; name of the entry, shown in y2cc
 Name = _("Self certification")
