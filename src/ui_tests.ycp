@@ -28,7 +28,7 @@
      */
     global define term BuildTestContents (string caption, string helptext, string frameheader, term customwidget, string status) ``{
 
-	string statusmsg = _("Current status: %1");
+	string statusmsg = _("Current Status: %1");
 
 	term contents =
 	`VBox(
@@ -43,7 +43,7 @@
 			    `VSpacing(0.5),
 			    customwidget,
 			    `VSpacing(0.5),
-			    `PushButton(`id(`start), _("&Start!")),
+			    `PushButton(`id(`start), _("&Start")),
 			    `VSpacing(0.5),
 			    `Label(`id(`status),`opt(`outputField),sformat(statusmsg,status)+" "),
 			    `VSpacing(1.5)
@@ -70,12 +70,12 @@
      * Collect log files
      */
     global define any CollectDialog () ``{
-	string caption = _("Certification: Collect system files");
+	string caption = _("Certification: Collect System Files");
 
 	string test_collect = Certify::results["test_collect"]:status_notyet;
 
-	string frameheader = _("Collect system files");
-	term customwidget = `Label(_("Press Start to begin collecting some system files"));
+	string frameheader = _("Collect System Files");
+	term customwidget = `Label(_("Press Start to begin collecting some system files."));
 	string helptext = CollectDialogHelp();
 
 	BuildTestContents(caption,helptext,frameheader,customwidget,test_collect);
@@ -106,14 +106,14 @@
 		if (cmdret>0)
 		{
 		    test_collect=status_failed;
-		    ErrorPopupCode(_("collecting system files failed."),cmdret);
+		    ErrorPopupCode(_("Collecting system files failed."),cmdret);
 
 		}
 		else
 		{
 		    test_collect=status_ok;
 		    //UI(`ChangeWidget(`id(`status),`Value,statusmsg+collect));
-		    Popup::Message(_("collecting logfiles completed"));
+		    Popup::Message(_("Collection of log files completed."));
 		}
 
 		BuildTestContents(caption,helptext,frameheader,customwidget,test_collect);
@@ -139,17 +139,22 @@
     global define any PingDialog () ``{
 	string hostname = "";
 
-	string caption = _("Certification: Ping test");
+	string caption = _("Certification: Ping Test");
 
 	string test_ping = Certify::results["test_ping"]:status_notyet;
 
-	string frameheader = _("Ping test");
+	string frameheader = _("Ping Test");
 	term customwidget = `VBox(
 				`Label(
-_("Now the reachability of a remote host in the LAN\nthrough the network interface will be tested\n\n")
-+ _("Please enter the name or address of a running\nand reachable host in your network")),
+_("Now the reachability of a remote host in the LAN
+through the network interface will be tested.
+
+")
++ _("Enter the name or address of a running
+and reachable host in your network.
+")),
 				`VSpacing(0.5),
-				`TextEntry(`id(`hostname),`opt(`defaultsize),_("&Hostname"),hostname)
+				`TextEntry(`id(`hostname),`opt(`defaultsize),_("&Host Name"),hostname)
 			    );
 	string helptext = PingDialogHelp();
 
@@ -172,7 +177,7 @@ _("Now the reachability of a remote host in the LAN\nthrough the network interfa
 		hostname=(string) UI::QueryWidget(`id(`hostname), `Value);
 		if(hostname == "" || hostname == "localhost" || hostname == "127.0.0.1")
 		{
-		    Popup::Message(_("Enter a valid hostname!"));
+		    Popup::Message(_("Enter a valid host name."));
 		}
 		else
 		{
@@ -191,7 +196,7 @@ _("Now the reachability of a remote host in the LAN\nthrough the network interfa
 		    else
 		    {
 			test_ping = status_ok;
-			Popup::Message(_("ping test completed"));
+			Popup::Message(_("Ping test completed."));
 		    }
 
 		    BuildTestContents(caption,helptext,frameheader,customwidget,test_ping);
@@ -217,15 +222,15 @@ _("Now the reachability of a remote host in the LAN\nthrough the network interfa
      * Floppy test
      */
     global define any FloppyDialog () ``{
-	string caption = _("Certification: Floppy drive test");
+	string caption = _("Certification: Floppy Drive Test");
 
 	string test_floppy = Certify::results["test_floppy"]:status_notyet;
 
-	string frameheader = _("Floppy test");
+	string frameheader = _("Floppy Test");
 	term customwidget = `VBox(
-				`Label(_("Please insert a disc in fd0 (going to be erased)")),
+				`Label(_("Insert a disk in fd0.  It will be erased.")),
 				`VSpacing(0.2),
-				`Label(_("Press Start to begin the floppy test"))
+				`Label(_("Press Start to begin the floppy test."))
 			    );
 	string helptext = FloppyDialogHelp();
 
@@ -252,12 +257,12 @@ _("Now the reachability of a remote host in the LAN\nthrough the network interfa
 		if (cmdret>0)
 		{
 		    test_floppy=status_failed;
-		    ErrorPopupCode(_("Floppy test failed"),cmdret);
+		    ErrorPopupCode(_("Floppy test failed."),cmdret);
 		}
 		else
 		{
 		    test_floppy=status_ok;
-		    Popup::Message(_("Floppy test completed"));
+		    Popup::Message(_("Floppy test completed."));
 		}
 
 		BuildTestContents(caption,helptext,frameheader,customwidget,test_floppy);
@@ -280,15 +285,15 @@ _("Now the reachability of a remote host in the LAN\nthrough the network interfa
      * CDROM test
      */
     global define any CdromDialog () ``{
-	string caption = _("Certification: CD-ROM drive test");
+	string caption = _("Certification: CD-ROM Drive Test");
 
 	string test_cdrom = Certify::results["test_cdrom"]:status_notyet;
 
-	string frameheader = _("CDROM test");
+	string frameheader = _("CD-ROM Test");
 	term customwidget = `VBox(
-				`Label(_("Please insert the installation CD in your CD-ROM drive")),
+				`Label(_("Insert the installation CD in your CD-ROM drive.")),
 				`VSpacing(0.2),
-				`Label(_("Press Start to begin the CD-ROM drive test"))
+				`Label(_("Press Start to begin the CD-ROM drive test."))
 			    );
 	string helptext = CdromDialogHelp();
 
@@ -315,12 +320,12 @@ _("Now the reachability of a remote host in the LAN\nthrough the network interfa
 		if (cmdret>0)
 		{
 		    test_cdrom=status_failed;
-		    ErrorPopupCode(_("CD-ROM drive test failed"),cmdret);
+		    ErrorPopupCode(_("CD-ROM drive test failed."),cmdret);
 		}
 		else
 		{
 		    test_cdrom=status_ok;
-		    Popup::Message(_("CD-ROM drive test completed"));
+		    Popup::Message(_("CD-ROM drive test completed."));
 		}
 
 		BuildTestContents(caption,helptext,frameheader,customwidget,test_cdrom);
@@ -343,18 +348,20 @@ _("Now the reachability of a remote host in the LAN\nthrough the network interfa
      * Serial login test
      */
     global define any SerialDialog () ``{
-	string caption = _("Certification: Serial login test");
+	string caption = _("Certification: Serial Login Test");
 
 	string test_serial = Certify::results["test_serial"]:status_notyet;
 
-	string frameheader = _("Serial login test");
+	string frameheader = _("Serial Login Test");
 	term customwidget = `VBox(
-				`Label(_("Please attach a null-modem cable to ttyS0")),
+				`Label(_("Attach a null-modem cable to ttyS0.")),
 				`VSpacing(0.2),
-				`Label(_("Press Start to begin the serial login test"))
+				`Label(_("Press Start to begin the serial login test."))
 			    );
 	term customwidget2 = `VBox(
-				`Label(_("Now start a Terminal program on the remote system\nand log in here as root or user")),
+				`Label(_("Now start a Terminal program on the remote system
+and log in here as root or user.
+")),
 				`VSpacing(0.2),
 				`Label(_("Press OK when you are logged in."))
 			    );
@@ -365,7 +372,7 @@ _("Now the reachability of a remote host in the LAN\nthrough the network interfa
 	``{
 	    boolean ready=false;
 	    integer cmdret= 111;
-	    BuildTestContents(caption,helptext,frameheader,customwidget2,_("waiting for login"));
+	    BuildTestContents(caption,helptext,frameheader,customwidget2,_("Waiting for login..."));
 	    UI::ChangeWidget(`id(`start),`Label, Label::OKButton());
 	    UI::ChangeWidget(`id(`next),`Enabled,false);
 	    UI::ChangeWidget(`id(`back),`Enabled,false);
@@ -419,7 +426,7 @@ _("Now the reachability of a remote host in the LAN\nthrough the network interfa
 		if (cmdret>0)
 		{
 		    test_serial=status_failed;
-		    ErrorPopupCode(_("Starting agetty on ttyS0 failed"),cmdret);
+		    ErrorPopupCode(_("Starting agetty on ttyS0 failed."),cmdret);
 		}
 		else
 		{
@@ -432,7 +439,7 @@ _("Now the reachability of a remote host in the LAN\nthrough the network interfa
 		    else
 		    {
 			    test_serial=status_ok;
-			    Popup::Message(_("Serial test completed"));
+			    Popup::Message(_("Serial test completed."));
 		    }
 		}
 
@@ -456,16 +463,16 @@ _("Now the reachability of a remote host in the LAN\nthrough the network interfa
      * Kernel compile test
      */
     global define any KernelDialog () ``{
-	string caption = _("Certification: Load test - Compiling the kernel");
+	string caption = _("Certification: Load Test -- Compiling the Kernel");
 
 	string test_kernel = Certify::results["test_kernel"]:status_notyet;
 	integer test_kernel_numbuilds = Certify::results["test_kernel_numbuilds"]:2;
 
-	string frameheader = _("Kernel compilation");
+	string frameheader = _("Kernel Compilation");
 	term customwidget = `VBox(
-				`HSquash(`IntField(`id(`number),_("&Number of Parallel builds"), 0, 100, test_kernel_numbuilds)),
+				`HSquash(`IntField(`id(`number),_("&Number of Parallel Builds"), 0, 100, test_kernel_numbuilds)),
 				`VSpacing(0.2),
-				`Label(_("Press Start to begin the kernel compile test"))
+				`Label(_("Press Start to begin the kernel compile test."))
 			    );
 	string helptext = KernelDialogHelp();
 
@@ -500,12 +507,12 @@ _("Now the reachability of a remote host in the LAN\nthrough the network interfa
 		if (cmdret>0)
 		{
 		    test_kernel=status_failed;
-		    ErrorPopupCode(_("Kernel compile test failed"),cmdret);
+		    ErrorPopupCode(_("Kernel compile test failed."),cmdret);
 		}
 		else
 		{
 		    test_kernel=status_ok;
-		    Popup::Message(_("Kernel compile test completed"));
+		    Popup::Message(_("Kernel compile test completed."));
 		}
 
 		BuildTestContents(caption,helptext,frameheader,customwidget,test_kernel);
@@ -529,13 +536,13 @@ _("Now the reachability of a remote host in the LAN\nthrough the network interfa
      * bonnie test
      */
     global define any BonnieDialog () ``{
-	string caption = _("Certification: Performance test for the hard disk drive");
+	string caption = _("Certification: Performance Test for the Hard Drive");
 
 	string test_bonnie = Certify::results["test_bonnie"]:status_notyet;
 
-	string frameheader = _("HDD benchmark");
+	string frameheader = _("HDD Benchmark");
 	term customwidget = `VBox(
-				`Label(_("Press Start to begin the hard disk benchmark (bonnie)"))
+				`Label(_("Press Start to begin the hard disk benchmark (bonnie)."))
 			    );
 	string helptext = BonnieDialogHelp();
 
@@ -562,12 +569,12 @@ _("Now the reachability of a remote host in the LAN\nthrough the network interfa
 		if (cmdret>0)
 		{
 		    test_bonnie=status_failed;
-		    ErrorPopupCode(_("benchmark failed"),cmdret);
+		    ErrorPopupCode(_("Benchmark failed."),cmdret);
 		}
 		else
 		{
 		    test_bonnie=status_ok;
-		    Popup::Message(_("benchmark completed"));
+		    Popup::Message(_("Benchmark completed."));
 		}
 
 		BuildTestContents(caption,helptext,frameheader,customwidget,test_bonnie);

@@ -24,38 +24,38 @@
 
     map descriptions =
 	$[
-	    "system_manufacturer" : _("System manufacturer"),
-	    "system_designation" : _("System designation"),
-	    "system_cpu" : _("Type and number of CPUs"),
+	    "system_manufacturer" : _("System Manufacturer"),
+	    "system_designation" : _("System Designation"),
+	    "system_cpu" : _("Type and Number of CPUs"),
 	    "system_ram" : _("Amount of RAM"),
 
-	    "mainboard_manufacturer" : _("Mainboard manufacturer"),
-	    "mainboard_version" : _("Mainboard version"),
-	    "bios_manufacturer" : _("BIOS manufacturer"),
-	    "bios_version" : _("BIOS version"),
+	    "mainboard_manufacturer" : _("Motherboard Manufacturer"),
+	    "mainboard_version" : _("Motherboard Version"),
+	    "bios_manufacturer" : _("BIOS Manufacturer"),
+	    "bios_version" : _("BIOS Version"),
 
 	    "scsi_controller" : _("SCSI Controller"),
 	    "harddisks" : _("Hard Disks"),
 
 	    "chipset_manufacturer" : _("Chipset Manufacturer"),
-	    "chipset_designation" :  _("Official designation/type of chipset"),
+	    "chipset_designation" :  _("Official Designation and Type of Chipset"),
 	    "chipset_northbridge" :  _("Northbridge"),
 	    "chipset_southbridge" :  _("Southbridge"),
-	    "chipset_iochip" :  _("I/O chip"),
-	    "graphicscard" : _("Graphics card"),
+	    "chipset_iochip" :  _("I/O Chip"),
+	    "graphicscard" : _("Graphics Card"),
 
 	    "ethernetcontroller" : _("Ethernet controller"),
-	    "floppydrives" : _("Floppy drives"),
+	    "floppydrives" : _("Floppy Drives"),
 	    "cdromdrives" : _("CD-ROM drives"),
-	    "powersupply" : _("Power supply unit"),
+	    "powersupply" : _("Power Supply Unit"),
 
-	    "test_collect" : _("Collect system files"),
-	    "test_ping" : _("Ping test"),
-	    "test_floppy" : _("Floppy drive test"),
-	    "test_cdrom" : _("CD-ROM drive test"),
-	    "test_serial" : _("Serial login test"),
-	    "test_kernel" : _("Kernel compile test"),
-	    "test_bonnie" : _("HDD benchmark"),
+	    "test_collect" : _("Collect System Files"),
+	    "test_ping" : _("Ping Test"),
+	    "test_floppy" : _("Floppy Drive Test"),
+	    "test_cdrom" : _("CD-ROM Drive Test"),
+	    "test_serial" : _("Serial Login Test"),
+	    "test_kernel" : _("Kernel Compile Test"),
+	    "test_bonnie" : _("HDD Benchmark"),
 
 	];
 
@@ -85,10 +85,10 @@
      * @return boolean True on success
      */
     global define boolean Write (any abort) ``{
-	string caption = _("Certification: Writing settings");
+	string caption = _("Certification: Writing Settings");
 	term contents = `VBox(
 			    `VStretch(),
-			    `Label(_("Please wait while settings are copied to the floppy")),
+			    `Label(_("Please wait while settings are copied to the floppy...")),
 			    `VStretch()
 			 );
 	string helptext = SummaryDialogHelp();
@@ -107,7 +107,9 @@
 
 	    if (writeret == false)
 	    {
-		boolean yes = Popup::YesNo(sformat(_("Could not write file %1\nDo you want try again?"),logfile));
+		boolean yes = Popup::YesNo(sformat(_("Could not write file %1.
+Try again?
+"),logfile));
 		if(!yes)
 		{
 		    break;
@@ -119,7 +121,9 @@
 		cmdret = (integer) SCR::Execute (.target.bash,"cd /root/certlogs; /usr/bin/copytofloppy");
 		if (cmdret > 0)
 		{
-		    boolean yes = Popup::YesNo(_("Could not copy logfiles to floppy\nDo you want try again?"));
+		    boolean yes = Popup::YesNo(_("Could not copy log files to floppy.
+Try again?
+"));
 		    if(!yes)
 		    {
 			    break;

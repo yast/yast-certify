@@ -15,38 +15,26 @@
      * Help for the ReadDialog () dialog.
      * @return string The help text.
      */
-    global define string ReadDialogHelp () ``{
-	// TODO FIXME: Modify it to your needs!
-	return
-	    // For translators: self_certify read dialog help, part 1 of 2
-_("<P><B><BIG>Initializing self_certify</BIG></B><BR>
-Please wait for a while...
-<BR></P>") +
-	    // For translators: self_certify read dialog help, part 2 of 2
-_("<P><B><BIG>Aborting the initialization:</BIG></B><BR>
-You can safely abort the configuration utility by pressing the <B>Abort</B>
-button now.
-</P>");
-    }
-
 
     /**
      * Help for the DetectedDialog () dialog.
      * @return string The help text.
      */
-    global define string DetectedDialogHelp () ``{
+    define string DetectedDialogHelp () ``{
 	// TODO FIXME: Modify it to your needs!
 	return
 	    // For translators: self_certify detected dialog help, part 1 of 3
-_("<P><B><BIG>Self_certify setup</BIG></B><BR>
-Here you can configure your self_certify.
-<BR></P>") +
+_("<P><B><BIG>Self Certify Setup</BIG></B><BR>
+Here, configure your self certify.
+<BR></P>
+") +
 	    // For translators: self_certify detected dialog help, part 2 of 3
-_("<P><B><BIG>Adding a self_certify:</BIG></B><BR>
-Choose self_certify from the list of the detected self_certifys. If your self_certify was
+_("<P><B><BIG>Adding a Self Certify:</BIG></B><BR>
+Choose a self_certify from the list of the detected ones. If your self_certify was
 not autodetected, use <B>Other (not detected)</B>. Then press
 <B>Configure</B>.
-</P>") +
+</P>
+") +
 	    // For translators: self_certify detected dialog help, part 3 of 3
 _("<P><B><BIG>Editing or deleting:</BIG></B><BR>
 If you press <B>Edit</B>, an additional dialog (where you
@@ -62,19 +50,22 @@ can change the configuration) will open.
 	// TODO FIXME: Modify it to your needs!
 	return
 	    // For translators: self_certify overview dialog help, part 1 of 3
-_("<P><B><BIG>Self_certify overview</BIG></B><BR>
-Here you can get an overview about installed self_certifys. Additionally
+_("<P><B><BIG>Self Certify Overview</BIG></B><BR>
+Here, get an overview of installed self certifies. Additionally,
 you can edit their configuration.
-<BR></P>") +
+<BR></P>
+") +
 	    // For translators: self_certify overview dialog help, part 2 of 3
-_("<P><B><BIG>Adding a self_certify:</BIG></B><BR>
+_("<P><B><BIG>Adding a Self Certify:</BIG></B><BR>
 If you press <B>Add</B>, you can manually configure a self_certify.
-</P>") +
+</P>
+") +
 	    // For translators: self_certify overview dialog help, part 3 of 3
-_("<P><B><BIG>Editing or deleting:</BIG></B><BR>
-Choose a self_certify, whose configuration you want to change or remove.
+_("<P><B><BIG>Editing or Deleting:</BIG></B><BR>
+Choose a self_certify to change or remove.
 Then press the appropriate button: <B>Edit</B> or <B>Delete</B>.
-</P>");
+</P>
+");
     }
 
     /**
@@ -84,7 +75,7 @@ Then press the appropriate button: <B>Edit</B> or <B>Delete</B>.
     global define string SystemDialogHelp () ``{
 	return
 	    // For translators: self_certify system dialog help, part 1 of 2
-	    _("<p>Please fill out the fields on the right as accurately as possible</p>");
+	    _("<p>Complete the fields on the right as accurately as possible</p>");
     }
 
     /**
@@ -94,7 +85,7 @@ Then press the appropriate button: <B>Edit</B> or <B>Delete</B>.
     global define string MainboardDialogHelp () ``{
 	return
 	    // For translators: self_certify system dialog help, part 1 of 2
-	    _("<p>Please enter the Mainboard and BIOS specifications of your machine here</p>");
+	    _("<p>Enter the motherboard and BIOS specifications of your machine here.</p>");
     }
 
     /**
@@ -104,38 +95,39 @@ Then press the appropriate button: <B>Edit</B> or <B>Delete</B>.
     global define string HDDDialogHelp () ``{
 	return
 	    // For translators: self_certify system dialog help, part 1 of 2
-	    _("<p>Please enter your Harddrive and Controller specifications here. Be as specific as possible</p>");
+	    _("<p>Please enter your hard drive and controller specifications here. Be as specific as possible.</p>");
     }
     global define string ChipsetDialogHelp () ``{
 	return
 	    // For translators: self_certify system dialog help, part 1 of 2
-	    _("<p>Please enter the chipset specifications pertaining to your machine here</p>");
+	    _("<p>Enter the chipset specifications pertaining to your machine here.</p>");
     }
     global define string MiscDialogHelp () ``{
 	return
 	    // For translators: self_certify system dialog help, part 1 of 2
-	    _("<p>Please enter any other missing information here and specify for the graphics
-and network adapter whether they are onboard or seperate</p>");
+	    _("<p>Enter any other missing information here and, for the graphics
+and network adapter, specify whether they are onboard or separate.</p>
+");
     }
     global define string CollectDialogHelp () ``{
 	return
 	    // For translators: self_certify system dialog help, part 1 of 2
-	    _("<p>Now the collection of system-related log files will begin. Please be patient after pressing the  Start button. After this is completed, please press OK, then Next</p>");
+	    _("<p>Now the collection of system-related log files will begin. Please be patient after pressing Start. After this is completed, press OK then Next.</p>");
     }
     global define string PingDialogHelp () ``{
 	return
 	    // For translators: self_certify system dialog help, part 1 of 2
-	    _("<p>Here, the basic functioning of your network card will be tested. Enter a hostname and please press Start</p>");
+	    _("<p>Here, the basic functioning of your network card will be tested. Enter a host name and press Start.</p>");
     }
     global define string FloppyDialogHelp () ``{
 	return
 	    // For translators: self_certify system dialog help, part 1 of 2
-	    _("<p>Please insert an error-free, empty floppy disk into the drive. This takes some time (about 3 min). After this test is completed, the floppy should remain in the drive.</p>");
+	    _("<p>Insert an error-free, empty floppy disk into the drive. This takes some time (about 3 minutes). After this test is completed, the floppy should remain in the drive.</p>");
     }
     global define string CdromDialogHelp () ``{
 	return
 	    // For translators: self_certify system dialog help, part 1 of 2
-	    _("<p>If the self-certification CD is no longer in the CD drive, please insert it now. This will take some time (about 10 min).</p>");
+	    _("<p>If the self-certification CD is no longer in the CD drive, insert it now. This will take some time (about 10 minutes).</p>");
     }
     global define string SerialDialogHelp () ``{
 	return
@@ -146,17 +138,17 @@ and network adapter whether they are onboard or seperate</p>");
     global define string KernelDialogHelp () ``{
 	return
 	    // For translators: self_certify system dialog help, part 1 of 2
-	    _("<p>Building the kernel. Please enter the number of processors + 1, according to the machine to be certified, by hand in the designated field. This can take some time.</p>");
+	    _("<p>Building the kernel. Enter the number of processors + 1, according to the machine to certify, by hand in the designated field. This can take some time.</p>");
     }
     global define string BonnieDialogHelp () ``{
 	return
 	    // For translators: self_certify system dialog help, part 1 of 2
-	    _("<p>Bonnie test. Performance test in respect to hard disk access. This can take some time</p>");
+	    _("<p>Bonnie test. Performance test in respect to hard disk access. This can take some time.</p>");
     }
     global define string SummaryDialogHelp () ``{
 	return
 	    // For translators: self_certify system dialog help, part 1 of 2
-	    _("<p>After ejecting the floppy, immediately change it to read-only. Please e-mail the files located on this floppy as soon as possible to:<br>&lt;certify@suse.de&gt;<br> and send the floppy to the following postal address:</p>")
+	    _("<p>After ejecting the floppy, immediately change it to read-only. E-mail the files located on this floppy as soon as possible to:<br>&lt;certify@suse.de&gt;<br> and send the floppy to the following postal address:</p>")
 	    + _("<p>SuSE AG<br>Hardware Certification<br>Deutschherrenstr. 15-19<br>90429 Nuernberg<br>Germany</p>");
     }
 

@@ -35,9 +35,9 @@
 			`HSpacing(2),
 			`VBox(
 			    `VSpacing(0.5),
-			    `TextEntry(`id("entry_manufacturer"), _("System &manufacturer"),     system_manufacturer),
-			    `TextEntry(`id("entry_designation"),  _("System &designation"),      system_designation),
-			    `TextEntry(`id("entry_cpu"),          _("Type and number of &CPUs"), system_cpu),
+			    `TextEntry(`id("entry_manufacturer"), _("System &Manufacturer"),     system_manufacturer),
+			    `TextEntry(`id("entry_designation"),  _("System &Designation"),      system_designation),
+			    `TextEntry(`id("entry_cpu"),          _("Type and Number of &CPUs"), system_cpu),
 			    `TextEntry(`id("entry_ram"),          _("&Amount of RAM"),           system_ram),
 			    `VSpacing(1.5)
 			),
@@ -78,22 +78,22 @@
 		{
 		    if(system_manufacturer == "")
 		    {
-			Popup::Message( _("You have to enter a manufacturer"));
+			Popup::Message( _("Enter a manufacturer."));
 			continue;
 		    }
 		    else if(system_designation == "")
 		    {
-			Popup::Message( _("You have to enter a designation"));
+			Popup::Message( _("Enter a designation."));
 			continue;
 		    }
 		    else if(system_cpu == "")
 		    {
-			Popup::Message( _("You have to specify the processor type"));
+			Popup::Message( _("Specify the processor type."));
 			continue;
 		    }
 		    else if(system_ram == "")
 		    {
-			Popup::Message( _("You have to specify the amount of RAM"));
+			Popup::Message( _("Specify the amount of RAM."));
 			continue;
 		    }
 		}
@@ -115,7 +115,7 @@
      * @return any Returned value from UserInput() call
      */
     global define any MainboardDialog () ``{
-	string caption = _("Certification: Mainboard and BIOS Information");
+	string caption = _("Certification: Motherboard and BIOS Information");
 
 	string mainboard_manufacturer	= Certify::results["mainboard_manufacturer"]:"";
 	string mainboard_version	= Certify::results["mainboard_version"]:"";
@@ -127,13 +127,13 @@
 	    `VSpacing(1.5),
 	    `HBox (
 		`HSpacing (3),
-		`Frame( _("Mainboard and BIOS Information"),
+		`Frame( _("Motherboard and BIOS Information"),
 		    `HBox(
 			`HSpacing(2),
 			`VBox(
 			    `VSpacing(0.5),
-			    `TextEntry(`id("mainboard_manufacturer"), _("&Mainboard Manufacturer"), mainboard_manufacturer),
-			    `TextEntry(`id("mainboard_version"),      _("Ma&inboard Version"),      mainboard_version),
+			    `TextEntry(`id("mainboard_manufacturer"), _("&Motherboard Manufacturer"), mainboard_manufacturer),
+			    `TextEntry(`id("mainboard_version"),      _("Motherboard Vers&ion"),      mainboard_version),
 			    `TextEntry(`id("bios_manufacturer"),      _("BIOS M&anufacturer"),      bios_manufacturer),
 			    `TextEntry(`id("bios_version"),           _("BIOS Versi&on"),           bios_version),
 			    `VSpacing(1.5)
@@ -175,17 +175,17 @@
 		{
 		    if(mainboard_manufacturer == "")
 		    {
-			Popup::Message( _("You have to enter the manufacturer"));
+			Popup::Message( _("Enter the manufacturer."));
 			continue;
 		    }
 		    else if(bios_manufacturer == "")
 		    {
-			Popup::Message( _("You have to enter the BIOS manufacturer"));
+			Popup::Message( _("Enter the BIOS manufacturer."));
 			continue;
 		    }
 		    else if(bios_version == "")
 		    {
-			Popup::Message( _("You have to enter the BIOS Version"));
+			Popup::Message( _("Enter the BIOS version."));
 			continue;
 		    }
 		}
@@ -260,7 +260,7 @@
 		{
 		    if(harddisks == "")
 		    {
-			Popup::Message( _("You have to fill in the hard disk entry"));
+			Popup::Message( _("Complete the hard disk entry."));
 			continue;
 		    }
 		}
@@ -279,7 +279,7 @@
      * @return any Returned value from UserInput() call
      */
     global define any ChipsetDialog () ``{
-	string caption = _("Certification: Chipset specifications");
+	string caption = _("Certification: Chipset Specifications");
 
 	string chipset_manufacturer	= Certify::results["chipset_manufacturer"]:"";
 	string chipset_designation	= Certify::results["chipset_designation"]:"";
@@ -292,16 +292,16 @@
 	    `VSpacing(1.5),
 	    `HBox (
 		`HSpacing (3),
-		`Frame( _("Chipset specifications"),
+		`Frame( _("Chipset Specifications"),
 		    `HBox(
 			`HSpacing(2),
 			`VBox(
 			    `VSpacing(0.5),
 			    `TextEntry(`id("chipset_manufacturer"), _("&Chipset Manufacturer"), chipset_manufacturer),
-			    `TextEntry(`id("chipset_designation"),  _("O&fficial designation/type of chipset"), chipset_designation),
+			    `TextEntry(`id("chipset_designation"),  _("O&fficial Designation and Type of Chipset"), chipset_designation),
 			    `TextEntry(`id("chipset_northbridge"),  _("N&orthbridge"), chipset_northbridge),
 			    `TextEntry(`id("chipset_southbridge"),  _("&Southbridge"), chipset_southbridge),
-			    `TextEntry(`id("chipset_iochip"),  _("&I/O chip"), chipset_iochip),
+			    `TextEntry(`id("chipset_iochip"),  _("&I/O Chip"), chipset_iochip),
 			    `VSpacing(1.5)
 			),
 			`HSpacing(2)
@@ -342,12 +342,12 @@
 		{
 		    if(chipset_manufacturer == "")
 		    {
-			Popup::Message( _("You have to enter the chipset manufacturer"));
+			Popup::Message( _("Enter the chipset manufacturer."));
 			continue;
 		    }
 		    else if(chipset_designation == "")
 		    {
-			Popup::Message( _("You have to enter the chipset designation"));
+			Popup::Message( _("Enter the chipset designation."));
 			continue;
 		    }
 		}
@@ -387,11 +387,11 @@
 			`HSpacing(2),
 			`VBox(
 			    `VSpacing(0.5),
-			    `TextEntry(`id("graphicscard"), _("&Graphics card"), graphicscard),
-			    `TextEntry(`id("ethernetcontroller"), _("&Ethernet controller"), ethernetcontroller),
-			    `TextEntry(`id("floppydrives"), _("&Floppy drives"), floppydrives),
-			    `TextEntry(`id("cdromdrives"), _("&CD-ROM drives"), cdromdrives),
-			    `TextEntry(`id("powersupply"), _("&Power supply unit"), powersupply),
+			    `TextEntry(`id("graphicscard"), _("&Graphics Card"), graphicscard),
+			    `TextEntry(`id("ethernetcontroller"), _("&Ethernet Controller"), ethernetcontroller),
+			    `TextEntry(`id("floppydrives"), _("&Floppy Drives"), floppydrives),
+			    `TextEntry(`id("cdromdrives"), _("&CD-ROM Drives"), cdromdrives),
+			    `TextEntry(`id("powersupply"), _("&Power Supply Unit"), powersupply),
 			    `VSpacing(1.5)
 			),
 			`HSpacing(2)
@@ -431,7 +431,7 @@
 		{
 		    if(graphicscard == "")
 		    {
-			Popup::Message( _("You have to fill in the graphics card entry"));
+			Popup::Message( _("Complete the graphics card entry."));
 			continue;
 		    }
 		}

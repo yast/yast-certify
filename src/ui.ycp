@@ -59,7 +59,7 @@ define any Self_certifySequence () ``{
 	]
     ];
 
-    string caption = _("Self_certify configuration");
+    string caption = _("Self Certify Configuration");
     term contents = `Label (_("Initializing ..."));
 
     Wizard::CreateDialog ();
@@ -81,7 +81,7 @@ define any Self_certifySequence () ``{
  * @return any Returned value from WizardSequencer() call
  */
 define any Self_certifyAutoSequence () ``{
-    string caption = _("Self_certify configuration");
+    string caption = _("Self Certify Configuration");
     term contents = `Label (_("Initializing ..."));
 
     Wizard::CreateDialog ();
@@ -201,7 +201,7 @@ define any MainSequence () ``{
  */
 define symbol ReadDialog () ``{
     // Set help text
-    Wizard::RestoreHelp (ReadDialogHelp ());
+//    Wizard::RestoreHelp (ReadDialogHelp ());
 
     // A callback function for abort
     any callback = ``{
@@ -216,7 +216,7 @@ define symbol ReadDialog () ``{
 	integer cmdret = (integer) SCR::Execute (.target.bash,"/usr/bin/connecttox");
 	if (cmdret>0)
 	{
-	    Popup::Error( _("You have to run this from X"));
+	    Popup::Error( _("You must run this from X."));
 	    return `abort;
 	}
     }
@@ -256,7 +256,7 @@ define any SummaryDialog () ``{
 
     term contents = `VBox(
 	`VSpacing(1),
-	`Label(_("Please insert a blank floppy in fd0 and press the Next button")),
+	`Label(_("Insert a blank floppy in fd0 and press Next.")),
 	`VSpacing(1),
 	`RichText(Certify::Summary())
     );
