@@ -374,8 +374,8 @@ and log in here as root or user.
 	    integer cmdret= 111;
 	    BuildTestContents(caption,helptext,frameheader,customwidget2,_("Waiting for login..."));
 	    UI::ChangeWidget(`id(`start),`Label, Label::OKButton());
-	    UI::ChangeWidget(`id(`next),`Enabled,false);
-	    UI::ChangeWidget(`id(`back),`Enabled,false);
+	    Wizard::DisableNextButton();
+	    Wizard::DisableBackButton();
 	    repeat
 	    {
 		any ret = UI::UserInput();

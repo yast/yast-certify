@@ -233,8 +233,8 @@ define symbol WriteDialog () ``{
     // Set help text
     Wizard::RestoreHelp (WriteDialogHelp ());
     Wizard::DisableAbortButton();
-    UI::ChangeWidget(`id(`next),`Enabled,false);
-    UI::ChangeWidget(`id(`back),`Enabled,false);
+    Wizard::DisableNextButton();
+    Wizard::DisableBackButton();
 
     // A callback function for abort
     any callback = ``{
