@@ -63,6 +63,7 @@ define any Self_certifySequence () ``{
     term contents = `Label (_("Initializing ..."));
 
     Wizard::CreateDialog ();
+    Wizard::SetDesktopIcon("certify");
     Wizard::SetContentsButtons ( caption,
 				contents,
 				"",
@@ -85,6 +86,7 @@ define any Self_certifyAutoSequence () ``{
     term contents = `Label (_("Initializing ..."));
 
     Wizard::CreateDialog ();
+    Wizard::SetDesktopIcon("certify");
     Wizard::SetContentsButtons ( caption,
 				contents,
 				"",

@@ -22,7 +22,7 @@
 
     global define string SummaryText ();
 
-    map descriptions =
+    map<string, string> descriptions =
 	$[
 	    "system_manufacturer" : _("System Manufacturer"),
 	    "system_designation" : _("System Designation"),
