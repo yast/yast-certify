@@ -46,7 +46,7 @@
 		),
 		`HSpacing (3)
 	    ),
-	    `HVStretch()
+	    `VStretch()
 	);
 
 	Wizard::SetContentsButtons ( caption,
@@ -143,7 +143,7 @@
 		),
 		`HSpacing (3)
 	    ),
-	    `HVStretch()
+	    `VStretch()
 	);
 
 	Wizard::SetContentsButtons ( caption,
@@ -230,7 +230,7 @@
 		),
 		`HSpacing (3)
 	    ),
-	    `HVStretch()
+	    `VStretch()
 	);
 
 	Wizard::SetContentsButtons ( caption,
@@ -309,7 +309,7 @@
 		),
 		`HSpacing (3)
 	    ),
-	    `HVStretch()
+	    `VStretch()
 	);
 
 	Wizard::SetContentsButtons ( caption,
@@ -399,7 +399,7 @@
 		),
 		`HSpacing (3)
 	    ),
-	    `HVStretch()
+	    `VStretch()
 	);
 
 	Wizard::SetContentsButtons ( caption,
